@@ -147,13 +147,13 @@ const BUSINESS_CONTEXT=`Tu es l'assistante virtuelle du salon Hairspa, spéciali
 
 async function getAIResponse(msg){
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
+    const r=await fetch('https://api.x.ai/v1/chat/completions',{
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':'VOTRE_CLE_API','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:120,system:BUSINESS_CONTEXT,messages:[{role:'user',content:msg}]})
+      headers:{'Content-Type':'application/json','Authorization':'Bearer VOTRE_CLE_GROK'},
+      body:JSON.stringify({model:'grok-3-mini',max_tokens:120,messages:[{role:'system',content:BUSINESS_CONTEXT},{role:'user',content:msg}]})
     });
     const d=await r.json();
-    if(d.content&&d.content[0])return d.content[0].text;
+    if(d.choices&&d.choices[0])return d.choices[0].message.content;
   }catch(e){}
   return getFallback(msg);
 }
