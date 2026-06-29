@@ -3,177 +3,84 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Démo IA — Hairspa Bruxelles</title>
+<title>Hairspa — Assistant</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .demo-container { max-width: 420px; width: 100%; }
-  .header { text-align: center; margin-bottom: 24px; }
-  .header h1 { color: #fff; font-size: 22px; font-weight: 700; }
-  .header p { color: #8888aa; font-size: 14px; margin-top: 6px; }
-  .badge {
-    display: inline-block;
-    background: linear-gradient(90deg, #6c63ff, #3ecfcf);
-    color: white; font-size: 11px; font-weight: 600;
-    padding: 4px 12px; border-radius: 20px; margin-bottom: 12px;
-    text-transform: uppercase; letter-spacing: 1px;
-  }
-  .chat-window {
-    background: #12122a; border-radius: 20px;
-    border: 1px solid #2a2a5a; overflow: hidden;
-    box-shadow: 0 20px 60px rgba(108, 99, 255, 0.2);
-  }
-  .chat-header {
-    background: linear-gradient(90deg, #6c63ff, #3ecfcf);
-    padding: 16px 20px; display: flex; align-items: center; gap: 12px;
-  }
-  .avatar {
-    width: 38px; height: 38px; background: rgba(255,255,255,0.2);
-    border-radius: 50%; display: flex; align-items: center;
-    justify-content: center; font-size: 18px;
-  }
-  .chat-header-info h3 { color: white; font-size: 15px; font-weight: 600; }
-  .chat-header-info p { color: rgba(255,255,255,0.8); font-size: 12px; }
-  .status-dot {
-    width: 8px; height: 8px; background: #4eff91; border-radius: 50%;
-    display: inline-block; margin-right: 4px; animation: pulse 2s infinite;
-  }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-  .chat-messages {
-    padding: 20px; display: flex; flex-direction: column;
-    gap: 14px; min-height: 300px;
-  }
-  .message { display: flex; gap: 10px; align-items: flex-start; }
-  .message.user { flex-direction: row-reverse; }
-  .msg-avatar {
-    width: 30px; height: 30px; border-radius: 50%;
-    background: linear-gradient(135deg, #6c63ff, #3ecfcf);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; flex-shrink: 0;
-  }
-  .msg-bubble {
-    max-width: 75%; padding: 10px 14px; border-radius: 16px;
-    font-size: 14px; line-height: 1.5;
-  }
-  .message.bot .msg-bubble {
-    background: #1e1e42; color: #e0e0ff; border-bottom-left-radius: 4px;
-  }
-  .message.user .msg-bubble {
-    background: linear-gradient(135deg, #6c63ff, #3ecfcf);
-    color: white; border-bottom-right-radius: 4px;
-  }
-  .quick-replies { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 16px; }
-  .quick-reply {
-    background: transparent; border: 1px solid #6c63ff; color: #6c63ff;
-    padding: 6px 14px; border-radius: 20px; font-size: 13px;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .quick-reply:hover { background: #6c63ff; color: white; }
-  .chat-input {
-    display: flex; gap: 10px; padding: 16px 20px;
-    border-top: 1px solid #2a2a5a;
-  }
-  .chat-input input {
-    flex: 1; background: #1e1e42; border: 1px solid #3a3a6a;
-    border-radius: 12px; padding: 10px 14px; color: white;
-    font-size: 14px; outline: none;
-  }
-  .send-btn {
-    background: linear-gradient(135deg, #6c63ff, #3ecfcf);
-    border: none; border-radius: 12px; width: 42px; height: 42px;
-    cursor: pointer; color: white; font-size: 18px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .stats-bar {
-    display: flex; justify-content: space-around; padding: 16px 20px;
-    background: #0d0d24; border-top: 1px solid #2a2a5a;
-  }
-  .stat { text-align: center; }
-  .stat-value { color: #6c63ff; font-size: 18px; font-weight: 700; }
-  .stat-label { color: #8888aa; font-size: 11px; margin-top: 2px; }
-  .cta-section { text-align: center; margin-top: 24px; }
-  .cta-btn {
-    background: linear-gradient(135deg, #6c63ff, #3ecfcf);
-    color: white; border: none; padding: 14px 32px; border-radius: 14px;
-    font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 10px;
-  }
-  .cta-sub { color: #8888aa; font-size: 12px; }
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@300;400;500&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#faf8f5;font-family:'Montserrat',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
+  .demo-banner{position:fixed;top:0;left:0;right:0;background:#c9a96e;color:#fff;text-align:center;padding:8px;font-size:11px;letter-spacing:2px;text-transform:uppercase;z-index:100}
+  .widget{width:400px;height:600px;display:flex;flex-direction:column;background:#fff;border-radius:4px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.08);margin-top:30px}
+  .header{background:#1a1a1a;padding:24px 20px;display:flex;align-items:center;gap:14px}
+  .logo-area{display:flex;flex-direction:column}
+  .logo-text{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:#fff;letter-spacing:3px;text-transform:uppercase}
+  .logo-sub{font-size:9px;letter-spacing:4px;color:#c9a96e;text-transform:uppercase;margin-top:2px}
+  .status{width:8px;height:8px;border-radius:50%;background:#c9a96e;margin-left:auto;box-shadow:0 0 0 3px rgba(201,169,110,0.3)}
+  .messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;background:#faf8f5}
+  .msg{max-width:82%;padding:12px 16px;border-radius:2px;font-size:13px;line-height:1.6}
+  .msg.bot{background:#fff;color:#2c2c2c;border-left:2px solid #c9a96e;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+  .msg.user{background:#1a1a1a;color:#fff;margin-left:auto;border-radius:2px}
+  .msg .sender{font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;color:#c9a96e;font-weight:500}
+  .msg.user .sender{color:#c9a96e}
+  .suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:0 20px 12px}
+  .sug{background:#fff;border:1px solid #e8e0d5;color:#555;padding:7px 12px;border-radius:2px;font-size:11px;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;transition:all .2s}
+  .sug:hover{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+  .input-area{padding:16px 20px;background:#fff;display:flex;gap:10px;border-top:1px solid #f0ece6}
+  .input-area input{flex:1;border:1px solid #e8e0d5;padding:10px 14px;font-size:13px;font-family:'Montserrat',sans-serif;outline:none;background:#faf8f5;color:#2c2c2c;border-radius:2px}
+  .input-area input:focus{border-color:#c9a96e}
+  .send-btn{background:#1a1a1a;color:#fff;border:none;width:38px;height:38px;border-radius:2px;cursor:pointer;font-size:16px;transition:background .2s}
+  .send-btn:hover{background:#c9a96e}
+  .typing{display:flex;gap:4px;padding:8px 0}
+  .typing span{width:5px;height:5px;background:#c9a96e;border-radius:50%;animation:bounce 1.2s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}
+  .typing span:nth-child(3){animation-delay:.4s}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
 </style>
 </head>
 <body>
-<div class="demo-container">
+<div class="demo-banner">✦ Démo interactive — Assistant IA Hairspa ✦</div>
+<div class="widget">
   <div class="header">
-    <div class="badge">🤖 Démo Exclusive — Hairspa Bruxelles</div>
-    <h1>Votre Assistant IA 24/7</h1>
-    <p>Répond à vos clients automatiquement, même après la fermeture</p>
+    <div class="logo-area">
+      <span class="logo-text">Hairspa</span>
+      <span class="logo-sub">Atelier de la Coloration</span>
+    </div>
+    <div class="status"></div>
   </div>
-  <div class="chat-window">
-    <div class="chat-header">
-      <div class="avatar">✂️</div>
-      <div class="chat-header-info">
-        <h3>Assistant Hairspa</h3>
-        <p><span class="status-dot"></span>En ligne — Répond en 2 secondes</p>
-      </div>
-    </div>
-    <div class="chat-messages">
-      <div class="message bot">
-        <div class="msg-avatar">✂️</div>
-        <div class="msg-bubble">Bonjour ! Je suis l'assistant IA de Hairspa. Je peux vous aider pour une réservation, des informations sur nos colorations ou nos tarifs. Comment puis-je vous aider ? 😊</div>
-      </div>
-      <div class="message user">
-        <div class="msg-avatar">👤</div>
-        <div class="msg-bubble">Vous faites des colorations balayage ?</div>
-      </div>
-      <div class="message bot">
-        <div class="msg-avatar">✂️</div>
-        <div class="msg-bubble">Oui ! Hairspa est expert en coloration visagiste et balayage. Nos coloristes adaptent chaque technique à votre visage et votre style. Souhaitez-vous prendre rendez-vous ? 💇‍♀️</div>
-      </div>
-      <div class="message user">
-        <div class="msg-avatar">👤</div>
-        <div class="msg-bubble">Oui, vous avez de la place samedi ?</div>
-      </div>
-      <div class="message bot">
-        <div class="msg-avatar">✂️</div>
-        <div class="msg-bubble">Samedi nous sommes ouverts de 9h à 19h ! J'ai des créneaux disponibles à 10h, 13h30 et 15h. Lequel vous convient ? Je note votre nom et c'est confirmé ✅</div>
-      </div>
-    </div>
-    <div class="quick-replies">
-      <button class="quick-reply">📅 Prendre RDV</button>
-      <button class="quick-reply">💰 Tarifs coloration</button>
-      <button class="quick-reply">📍 Où êtes-vous ?</button>
-      <button class="quick-reply">⏰ Horaires</button>
-    </div>
-    <div class="chat-input">
-      <input type="text" placeholder="Écrivez votre message...">
-      <button class="send-btn">➤</button>
-    </div>
-    <div class="stats-bar">
-      <div class="stat">
-        <div class="stat-value">24/7</div>
-        <div class="stat-label">Disponible</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">2s</div>
-        <div class="stat-label">Réponse</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">-80%</div>
-        <div class="stat-label">Appels manqués</div>
-      </div>
+  <div class="messages" id="msgs">
+    <div class="msg bot">
+      <div class="sender">Hairspa</div>
+      Bonjour, bienvenue chez Hairspa ✦<br><br>Je suis votre assistante. Comment puis-je vous aider aujourd'hui ?
     </div>
   </div>
-  <div class="cta-section">
-    <button class="cta-btn">🚀 Je veux ce système pour Hairspa</button>
-    <p class="cta-sub">Installation en 48h · Sans engagement · Démo offerte</p>
+  <div class="suggestions" id="sugs">
+    <button class="sug" onclick="ask(this)">Prendre rendez-vous</button>
+    <button class="sug" onclick="ask(this)">Tarifs coloration</button>
+    <button class="sug" onclick="ask(this)">Horaires du salon</button>
+    <button class="sug" onclick="ask(this)">Coloration végétale</button>
+  </div>
+  <div class="input-area">
+    <input id="inp" placeholder="Votre question…" onkeydown="if(event.key==='Enter')send()">
+    <button class="send-btn" onclick="send()">→</button>
   </div>
 </div>
+<script>
+const R={
+  "rendez":["Pour réserver chez Hairspa, appelez le <strong>0488 28 95 17</strong> ou passez directement sur notre plateforme Salonkee. Nous accueillons aussi sans rendez-vous, du lundi au samedi 9h–19h.","Parfait ! Vous pouvez réserver via Salonkee ou nous appeler au <strong>0488 28 95 17</strong>. Souhaitez-vous une info sur nos prestations ?"],
+  "tarif":["Nos tarifs varient selon la prestation. En coloration : retouche racines à partir de 55€, balayage complet à partir de 95€. Consulte nos prix complets sur notre site ou contactez-nous pour un devis personnalisé.","Je vous conseille de nous appeler au <strong>0488 28 95 17</strong> pour un devis adapté à vos cheveux — chaque coloration est unique chez Hairspa."],
+  "coloration":["Chez Hairspa, nous sommes spécialistes en <strong>coloration végétale et sans ammoniaque</strong>. Ombré, balayage, mèches, retouche racines… certifiés Star Colorist L'Oréal 2024 & 2025. ✦","La coloration végétale est notre spécialité — elle respecte le cheveu et sublimen les tons naturels. Envie d'en savoir plus sur une technique précise ?"],
+  "horaire":["Le salon est ouvert <strong>du lundi au samedi, 9h à 19h</strong>. Rue Archimède 1, Brussels (Quartier Européen). On vous attend !","Nous sommes là 6 jours sur 7 : lundi–samedi 9h–19h. Réservation recommandée au <strong>0488 28 95 17</strong>."],
+  "balayage":["Le balayage est notre signature : un effet fondu naturel, lumineux, adapté à votre carnation. Durée : 2h à 3h selon les cheveux. Résultat longue durée.","Nous proposons french balayage, balayage soleil, ombré hair… Chaque technique est choisie avec vous pour un résultat sur mesure."],
+  "coupe":["Nos coupes sont très personnalisées et faciles à vivre. Coupe femme à partir de 45€, homme à partir de 25€. Lavage et brushing inclus.","La coupe chez Hairspa : toujours précédée d'un diagnostic cheveux et d'un conseil personnalisé."],
+  "soin":["Nous utilisons des produits sans parabène, sans sulfate, sans silicone : <strong>Kérastase, Olaplex, K18, Kevin Murphy</strong>. Chaque service inclut un rituel soin adapté.","Nos soins capillaires sont sélectionnés selon l'état de vos cheveux. Demandez le Spa Cheveux lors de votre prochain passage !"],
+  "default":["Je suis l'assistante Hairspa, spécialisée en coloration végétale et coiffure haut de gamme. Pour toute question précise, appelez le <strong>0488 28 95 17</strong> ou passez nous voir Rue Archimède 1 ! ✦","Pour plus d'infos, n'hésitez pas à nous contacter au <strong>0488 28 95 17</strong> ou à consulter coiffurehairspa.be."]
+};
+let ri={};
+function getR(k){ri[k]=(ri[k]||0);let r=R[k][ri[k]%R[k].length];ri[k]++;return r;}
+function detect(t){t=t.toLowerCase();if(t.match(/rdv|rendez|réserv|book/))return"rendez";if(t.match(/tarif|prix|coût|combien/))return"tarif";if(t.match(/coloration|couleur|teinture|teint|ammoniaque|végétal/))return"coloration";if(t.match(/horaire|heure|ouvert|fermé|quand/))return"horaire";if(t.match(/balayage|balayag|ombré|mèche|highlight/))return"balayage";if(t.match(/coupe|cut/))return"coupe";if(t.match(/soin|olaplex|kérastase|produit|traitement/))return"soin";return"default";}
+function addMsg(t,s,html=false){const m=document.createElement('div');m.className='msg '+s;const sn=document.createElement('div');sn.className='sender';sn.textContent=s==='bot'?'Hairspa':'Vous';m.appendChild(sn);const txt=document.createElement('span');if(html)txt.innerHTML=t;else txt.textContent=t;m.appendChild(txt);document.getElementById('msgs').appendChild(m);m.scrollIntoView({behavior:'smooth'});}
+function showTyping(){const t=document.createElement('div');t.className='msg bot';t.id='typing';t.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';document.getElementById('msgs').appendChild(t);t.scrollIntoView({behavior:'smooth'});}
+function ask(el){const q=el.textContent;document.getElementById('sugs').style.display='none';addMsg(q,'user');showTyping();setTimeout(()=>{document.getElementById('typing')?.remove();addMsg(getR(detect(q)),'bot',true);},900);}
+function send(){const v=document.getElementById('inp').value.trim();if(!v)return;document.getElementById('sugs').style.display='none';document.getElementById('inp').value='';addMsg(v,'user');showTyping();setTimeout(()=>{document.getElementById('typing')?.remove();addMsg(getR(detect(v)),'bot',true);},900);}
+</script>
 </body>
 </html>
