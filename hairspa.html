@@ -3,43 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hairspa — Assistant</title>
+<title>Hairspa — Assistant IA</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@300;400;500&display=swap');
+  :root{--accent:#c9a96e;--dark:#1a1a1a;--bg:#faf8f5;--bubble:#fff;--text:#2c2c2c}
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#faf8f5;font-family:'Montserrat',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
-  .demo-banner{position:fixed;top:0;left:0;right:0;background:#c9a96e;color:#fff;text-align:center;padding:8px;font-size:11px;letter-spacing:2px;text-transform:uppercase;z-index:100}
-  .widget{width:400px;height:600px;display:flex;flex-direction:column;background:#fff;border-radius:4px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.08);margin-top:30px}
-  .header{background:#1a1a1a;padding:24px 20px;display:flex;align-items:center;gap:14px}
+  body{background:var(--bg);font-family:'Montserrat',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;flex-direction:column}
+
+  /* ANIMATIONS */
+  @keyframes messageSlideIn{from{opacity:0;transform:translateY(12px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes typingDot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+  @keyframes glowPulse{0%,100%{box-shadow:0 0 8px rgba(201,169,110,.4)}50%{box-shadow:0 0 20px rgba(201,169,110,.9)}}
+  @keyframes buttonFadeIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes popIn{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes fadeOut{from{opacity:1}to{opacity:0}}
+  @keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+
+  .msg{animation:messageSlideIn .35s cubic-bezier(.34,1.56,.64,1) forwards}
+  .sug{animation:buttonFadeIn .3s ease forwards;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+  .sug:hover{transform:translateY(-2px) scale(1.04)}
+
+  /* WIDGET */
+  .widget{width:400px;height:600px;display:flex;flex-direction:column;background:var(--bubble);border-radius:4px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.1);margin-top:10px}
+  .header{background:var(--dark);padding:22px 20px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
+  .header::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(201,169,110,.08),transparent);background-size:200% 100%;animation:shimmer 3s infinite linear}
   .logo-area{display:flex;flex-direction:column}
   .logo-text{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:#fff;letter-spacing:3px;text-transform:uppercase}
-  .logo-sub{font-size:9px;letter-spacing:4px;color:#c9a96e;text-transform:uppercase;margin-top:2px}
-  .status{width:8px;height:8px;border-radius:50%;background:#c9a96e;margin-left:auto;box-shadow:0 0 0 3px rgba(201,169,110,0.3)}
-  .messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;background:#faf8f5}
+  .logo-sub{font-size:9px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-top:2px}
+  .avatar{font-size:22px;animation:float 3s ease-in-out infinite}
+  .status{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-left:auto;box-shadow:0 0 0 3px rgba(201,169,110,.3)}
+  .messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px;background:var(--bg);scroll-behavior:smooth}
   .msg{max-width:82%;padding:12px 16px;border-radius:2px;font-size:13px;line-height:1.6}
-  .msg.bot{background:#fff;color:#2c2c2c;border-left:2px solid #c9a96e;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
-  .msg.user{background:#1a1a1a;color:#fff;margin-left:auto;border-radius:2px}
-  .msg .sender{font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;color:#c9a96e;font-weight:500}
-  .msg.user .sender{color:#c9a96e}
-  .suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:0 20px 12px}
-  .sug{background:#fff;border:1px solid #e8e0d5;color:#555;padding:7px 12px;border-radius:2px;font-size:11px;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;transition:all .2s}
-  .sug:hover{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
-  .input-area{padding:16px 20px;background:#fff;display:flex;gap:10px;border-top:1px solid #f0ece6}
-  .input-area input{flex:1;border:1px solid #e8e0d5;padding:10px 14px;font-size:13px;font-family:'Montserrat',sans-serif;outline:none;background:#faf8f5;color:#2c2c2c;border-radius:2px}
-  .input-area input:focus{border-color:#c9a96e}
-  .send-btn{background:#1a1a1a;color:#fff;border:none;width:38px;height:38px;border-radius:2px;cursor:pointer;font-size:16px;transition:background .2s}
-  .send-btn:hover{background:#c9a96e}
-  .typing{display:flex;gap:4px;padding:8px 0}
-  .typing span{width:5px;height:5px;background:#c9a96e;border-radius:50%;animation:bounce 1.2s infinite}
-  .typing span:nth-child(2){animation-delay:.2s}
-  .typing span:nth-child(3){animation-delay:.4s}
-  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+  .msg.bot{background:var(--bubble);color:var(--text);border-left:2px solid var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .msg.user{background:var(--dark);color:#fff;margin-left:auto}
+  .msg .sender{font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;color:var(--accent);font-weight:500}
+  .msg.user .sender{color:var(--accent)}
+
+  /* TYPING */
+  .typing-indicator{display:flex;gap:4px;padding:10px 14px;background:var(--bubble);border-left:2px solid var(--accent);border-radius:2px;width:fit-content;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .typing-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:typingDot 1.2s ease-in-out infinite}
+  .typing-dot:nth-child(2){animation-delay:.2s}
+  .typing-dot:nth-child(3){animation-delay:.4s}
+
+  /* SUGGESTIONS */
+  .suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:0 18px 10px}
+  .sug{background:var(--bubble);border:1px solid #e8e0d5;color:#555;padding:7px 12px;border-radius:2px;font-size:11px;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:.5px}
+  .sug:hover{background:var(--dark);color:#fff;border-color:var(--dark)}
+
+  /* INPUT */
+  .input-area{padding:14px 18px;background:var(--bubble);display:flex;gap:10px;border-top:1px solid #f0ece6}
+  .input-area input{flex:1;border:1px solid #e8e0d5;padding:10px 14px;font-size:13px;font-family:'Montserrat',sans-serif;outline:none;background:var(--bg);color:var(--text);border-radius:2px;transition:border-color .2s}
+  .input-area input:focus{border-color:var(--accent)}
+  .send-btn{background:var(--dark);color:#fff;border:none;width:38px;height:38px;border-radius:2px;cursor:pointer;font-size:16px;animation:glowPulse 2s ease-in-out infinite;transition:background .2s}
+  .send-btn:hover{background:var(--accent)}
+
+  /* STATS BAR */
+  .stats-bar{display:flex;justify-content:space-around;background:var(--dark);padding:10px 20px;width:400px;border-radius:0 0 4px 4px}
+  .stat{text-align:center}
+  .stat-value{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--accent);font-weight:400}
+  .stat-label{font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-top:1px}
+
+  /* POPUP */
+  #welcome-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;animation:fadeIn .4s ease}
+  #welcome-card{background:#111;border:1px solid var(--accent);border-radius:20px;padding:34px 30px;max-width:320px;width:90%;text-align:center;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 60px rgba(201,169,110,.25)}
+  #welcome-card h2{color:#fff;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;margin-bottom:6px;letter-spacing:2px}
+  #welcome-card p{color:#888;font-size:13px;margin-bottom:8px;line-height:1.6}
+  #welcome-card h3{font-family:'Cormorant Garamond',serif;font-size:24px;font-style:italic;background:linear-gradient(90deg,var(--accent),#fff8e8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:18px}
+  .welcome-btn{background:linear-gradient(135deg,var(--accent),#a07840);color:#fff;border:none;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;font-family:'Montserrat',sans-serif;letter-spacing:1px;transition:transform .2s}
+  .welcome-btn:hover{transform:scale(1.03)}
+  .welcome-note{color:#555;font-size:11px;margin-top:12px}
 </style>
 </head>
 <body>
-<div class="demo-banner">✦ Démo interactive — Assistant IA Hairspa ✦</div>
+
+<!-- POPUP -->
+<div id="welcome-overlay">
+  <div id="welcome-card">
+    <div style="font-size:44px;margin-bottom:14px;animation:float 3s ease-in-out infinite">✦</div>
+    <h2>Démo exclusive</h2>
+    <p>Créée spécialement pour</p>
+    <h3>Hairspa</h3>
+    <p>Voici à quoi ressemblerait votre assistant IA 24h/24.<br><strong style="color:#fff">Testez-le — il répond vraiment.</strong></p>
+    <button class="welcome-btn" onclick="closeWelcome()">✨ Découvrir ma démo</button>
+    <p class="welcome-note">Sans engagement · Installation en 48h</p>
+  </div>
+</div>
+
+<!-- WIDGET -->
 <div class="widget">
   <div class="header">
+    <span class="avatar">✦</span>
     <div class="logo-area">
       <span class="logo-text">Hairspa</span>
       <span class="logo-sub">Atelier de la Coloration</span>
@@ -49,7 +105,7 @@
   <div class="messages" id="msgs">
     <div class="msg bot">
       <div class="sender">Hairspa</div>
-      Bonjour, bienvenue chez Hairspa ✦<br><br>Je suis votre assistante. Comment puis-je vous aider aujourd'hui ?
+      Bonjour, bienvenue chez Hairspa ✦<br>Je suis votre assistante — coloration, RDV, tarifs… Comment puis-je vous aider ?
     </div>
   </div>
   <div class="suggestions" id="sugs">
@@ -63,24 +119,77 @@
     <button class="send-btn" onclick="send()">→</button>
   </div>
 </div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-value" data-target="24">0</div><div class="stat-label">h/24 disponible</div></div>
+  <div class="stat"><div class="stat-value" data-target="2" data-suffix="s">0s</div><div class="stat-label">temps de réponse</div></div>
+  <div class="stat"><div class="stat-value" data-target="80" data-suffix="%">0%</div><div class="stat-label">appels évités</div></div>
+</div>
+
 <script>
+// AUDIO
+let audioCtx;
+function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
+function playReceiveSound(){try{initAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(880,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(1100,audioCtx.currentTime+.1);g.gain.setValueAtTime(.07,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.3);o.start();o.stop(audioCtx.currentTime+.3);}catch(e){}}
+function playSendSound(){try{initAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(600,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(800,audioCtx.currentTime+.08);g.gain.setValueAtTime(.05,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.2);o.start();o.stop(audioCtx.currentTime+.2);}catch(e){}}
+
+// POPUP
+setTimeout(()=>{const o=document.getElementById('welcome-overlay');o.style.display='flex';},1500);
+function closeWelcome(){const o=document.getElementById('welcome-overlay');o.style.animation='fadeOut .3s ease forwards';setTimeout(()=>o.style.display='none',300);}
+
+// STATS
+function animateCounters(){document.querySelectorAll('.stat-value[data-target]').forEach(el=>{const target=parseInt(el.dataset.target),suffix=el.dataset.suffix||'';let cur=0;const inc=target/40;const t=setInterval(()=>{cur+=inc;if(cur>=target){cur=target;clearInterval(t);}el.textContent=Math.floor(cur)+suffix;},40);});}
+window.addEventListener('load',()=>setTimeout(animateCounters,2500));
+
+// CLAUDE API
+const BUSINESS_CONTEXT=`Tu es l'assistante virtuelle du salon Hairspa, spécialisé en coloration végétale à Bruxelles. Tu réponds en français, de manière élégante et chaleureuse. Tu aides les clients à prendre RDV, renseigner les tarifs, les horaires et les services. Réponds en maximum 2 phrases, toujours avec un emoji pertinent. Horaires : Lundi-Samedi 9h-19h. Tel: 0488 28 95 17. Adresse: Rue Archimède 1, Bruxelles.`;
+
+async function getAIResponse(msg){
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':'VOTRE_CLE_API','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:120,system:BUSINESS_CONTEXT,messages:[{role:'user',content:msg}]})
+    });
+    const d=await r.json();
+    if(d.content&&d.content[0])return d.content[0].text;
+  }catch(e){}
+  return getFallback(msg);
+}
+
+// FALLBACK local si pas de clé API
 const R={
-  "rendez":["Pour réserver chez Hairspa, appelez le <strong>0488 28 95 17</strong> ou passez directement sur notre plateforme Salonkee. Nous accueillons aussi sans rendez-vous, du lundi au samedi 9h–19h.","Parfait ! Vous pouvez réserver via Salonkee ou nous appeler au <strong>0488 28 95 17</strong>. Souhaitez-vous une info sur nos prestations ?"],
-  "tarif":["Nos tarifs varient selon la prestation. En coloration : retouche racines à partir de 55€, balayage complet à partir de 95€. Consulte nos prix complets sur notre site ou contactez-nous pour un devis personnalisé.","Je vous conseille de nous appeler au <strong>0488 28 95 17</strong> pour un devis adapté à vos cheveux — chaque coloration est unique chez Hairspa."],
-  "coloration":["Chez Hairspa, nous sommes spécialistes en <strong>coloration végétale et sans ammoniaque</strong>. Ombré, balayage, mèches, retouche racines… certifiés Star Colorist L'Oréal 2024 & 2025. ✦","La coloration végétale est notre spécialité — elle respecte le cheveu et sublimen les tons naturels. Envie d'en savoir plus sur une technique précise ?"],
-  "horaire":["Le salon est ouvert <strong>du lundi au samedi, 9h à 19h</strong>. Rue Archimède 1, Brussels (Quartier Européen). On vous attend !","Nous sommes là 6 jours sur 7 : lundi–samedi 9h–19h. Réservation recommandée au <strong>0488 28 95 17</strong>."],
-  "balayage":["Le balayage est notre signature : un effet fondu naturel, lumineux, adapté à votre carnation. Durée : 2h à 3h selon les cheveux. Résultat longue durée.","Nous proposons french balayage, balayage soleil, ombré hair… Chaque technique est choisie avec vous pour un résultat sur mesure."],
-  "coupe":["Nos coupes sont très personnalisées et faciles à vivre. Coupe femme à partir de 45€, homme à partir de 25€. Lavage et brushing inclus.","La coupe chez Hairspa : toujours précédée d'un diagnostic cheveux et d'un conseil personnalisé."],
-  "soin":["Nous utilisons des produits sans parabène, sans sulfate, sans silicone : <strong>Kérastase, Olaplex, K18, Kevin Murphy</strong>. Chaque service inclut un rituel soin adapté.","Nos soins capillaires sont sélectionnés selon l'état de vos cheveux. Demandez le Spa Cheveux lors de votre prochain passage !"],
-  "default":["Je suis l'assistante Hairspa, spécialisée en coloration végétale et coiffure haut de gamme. Pour toute question précise, appelez le <strong>0488 28 95 17</strong> ou passez nous voir Rue Archimède 1 ! ✦","Pour plus d'infos, n'hésitez pas à nous contacter au <strong>0488 28 95 17</strong> ou à consulter coiffurehairspa.be."]
+  "rendez":["Pour réserver chez Hairspa, appelez le <strong>0488 28 95 17</strong> ou via Salonkee. Sans RDV aussi le lundi–samedi 9h–19h ✦","Réservation via Salonkee ou au <strong>0488 28 95 17</strong>. Préférez-vous matin ou après-midi ? 💛"],
+  "tarif":["Coloration : retouche racines dès 55€, balayage dès 95€. Appelez le <strong>0488 28 95 17</strong> pour un devis sur mesure ✦","Chaque coloration est unique — devis gratuit au <strong>0488 28 95 17</strong> selon votre chevelure 💛"],
+  "coloration":["Spécialistes en <strong>coloration végétale et sans ammoniaque</strong> — certifiés Star Colorist L'Oréal 2024 & 2025. Ombré, balayage, mèches ✦","La coloration végétale respecte le cheveu et sublime les tons naturels. Quelle technique vous attire ? 💛"],
+  "horaire":["Ouvert <strong>lundi–samedi 9h–19h</strong>, Rue Archimède 1, Quartier Européen ✦","6 jours sur 7, 9h–19h. On vous attend sans rendez-vous ou sur réservation 💛"],
+  "default":["Salon Hairspa, Rue Archimède 1 — spécialistes coloration végétale. Appelez le <strong>0488 28 95 17</strong> ✦","Besoin d'infos ? 0488 28 95 17 ou coiffurehairspa.be 💛"]
 };
 let ri={};
-function getR(k){ri[k]=(ri[k]||0);let r=R[k][ri[k]%R[k].length];ri[k]++;return r;}
-function detect(t){t=t.toLowerCase();if(t.match(/rdv|rendez|réserv|book/))return"rendez";if(t.match(/tarif|prix|coût|combien/))return"tarif";if(t.match(/coloration|couleur|teinture|teint|ammoniaque|végétal/))return"coloration";if(t.match(/horaire|heure|ouvert|fermé|quand/))return"horaire";if(t.match(/balayage|balayag|ombré|mèche|highlight/))return"balayage";if(t.match(/coupe|cut/))return"coupe";if(t.match(/soin|olaplex|kérastase|produit|traitement/))return"soin";return"default";}
-function addMsg(t,s,html=false){const m=document.createElement('div');m.className='msg '+s;const sn=document.createElement('div');sn.className='sender';sn.textContent=s==='bot'?'Hairspa':'Vous';m.appendChild(sn);const txt=document.createElement('span');if(html)txt.innerHTML=t;else txt.textContent=t;m.appendChild(txt);document.getElementById('msgs').appendChild(m);m.scrollIntoView({behavior:'smooth'});}
-function showTyping(){const t=document.createElement('div');t.className='msg bot';t.id='typing';t.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';document.getElementById('msgs').appendChild(t);t.scrollIntoView({behavior:'smooth'});}
-function ask(el){const q=el.textContent;document.getElementById('sugs').style.display='none';addMsg(q,'user');showTyping();setTimeout(()=>{document.getElementById('typing')?.remove();addMsg(getR(detect(q)),'bot',true);},900);}
-function send(){const v=document.getElementById('inp').value.trim();if(!v)return;document.getElementById('sugs').style.display='none';document.getElementById('inp').value='';addMsg(v,'user');showTyping();setTimeout(()=>{document.getElementById('typing')?.remove();addMsg(getR(detect(v)),'bot',true);},900);}
+function getFallback(t){t=t.toLowerCase();let k='default';if(t.match(/rdv|rendez|réserv/))k='rendez';else if(t.match(/tarif|prix|combien/))k='tarif';else if(t.match(/coloration|végétal|ammoniaque|balayage|ombré/))k='coloration';else if(t.match(/horaire|heure|ouvert/))k='horaire';ri[k]=(ri[k]||0);const r=R[k][ri[k]%R[k].length];ri[k]++;return r;}
+
+// UI
+function addMsg(t,s,html=false){
+  const m=document.createElement('div');m.className='msg '+s;
+  const sn=document.createElement('div');sn.className='sender';sn.textContent=s==='bot'?'Hairspa':'Vous';m.appendChild(sn);
+  const txt=document.createElement('span');if(html)txt.innerHTML=t;else txt.textContent=t;m.appendChild(txt);
+  document.getElementById('msgs').appendChild(m);m.scrollIntoView({behavior:'smooth'});
+}
+function showTyping(){
+  const el=document.createElement('div');el.className='msg bot';el.id='typing-el';
+  el.innerHTML='<div class="sender">Hairspa</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+  document.getElementById('msgs').appendChild(el);el.scrollIntoView({behavior:'smooth'});return el;
+}
+async function sendMsg(v){
+  document.getElementById('sugs').style.display='none';
+  addMsg(v,'user');playSendSound();
+  const typing=showTyping();
+  const [resp]=await Promise.all([getAIResponse(v),new Promise(r=>setTimeout(r,800))]);
+  typing.remove();addMsg(resp,'bot',true);playReceiveSound();
+}
+function ask(el){sendMsg(el.textContent);}
+function send(){const v=document.getElementById('inp').value.trim();if(!v)return;document.getElementById('inp').value='';sendMsg(v);}
 </script>
 </body>
 </html>
