@@ -3,42 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Noodle Bar Brussels — Assistant</title>
+<title>The Noodle Bar — Assistant IA</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Inter:wght@300;400;600&display=swap');
+  :root{--accent:#e63900;--bg:#1e1209;--bubble:#2c1a0a;--text:#f5e6d0}
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#1a0a00;font-family:'Inter',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
-  .demo-banner{position:fixed;top:0;left:0;right:0;background:#e63900;color:#fff;text-align:center;padding:8px;font-size:11px;letter-spacing:1px;z-index:100}
-  .widget{width:400px;height:610px;display:flex;flex-direction:column;background:#1e1209;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);margin-top:30px;border:1px solid #3d2010}
-  .header{background:#e63900;padding:20px;display:flex;align-items:center;justify-content:space-between}
+  body{background:#1a0a00;font-family:'Inter',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;flex-direction:column}
+  @keyframes messageSlideIn{from{opacity:0;transform:translateY(12px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes typingDot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+  @keyframes glowPulse{0%,100%{box-shadow:0 0 8px rgba(230,57,0,.5)}50%{box-shadow:0 0 24px rgba(230,57,0,1)}}
+  @keyframes buttonFadeIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes popIn{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes fadeOut{from{opacity:1}to{opacity:0}}
+  @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+  .msg{animation:messageSlideIn .35s cubic-bezier(.34,1.56,.64,1) forwards}
+  .sug{animation:buttonFadeIn .3s ease forwards;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+  .sug:hover{transform:translateY(-2px) scale(1.04)}
+  .widget{width:400px;height:610px;display:flex;flex-direction:column;background:var(--bg);border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);margin-top:10px;border:1px solid #3d2010}
+  .header{background:var(--accent);padding:20px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+  .header::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);background-size:200% 100%;animation:shimmer 2.5s infinite linear}
   .h-brand{display:flex;flex-direction:column}
   .h-name{font-family:'Noto Sans JP',sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:1px}
-  .h-sub{font-size:10px;color:rgba(255,255,255,0.85);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
-  .h-icon{font-size:28px}
-  .messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .h-sub{font-size:10px;color:rgba(255,255,255,.85);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+  .h-icon{font-size:28px;animation:float 3s ease-in-out infinite}
+  .messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
   .msg{max-width:84%;padding:12px 16px;font-size:13px;line-height:1.65}
-  .msg.bot{background:#2c1a0a;color:#f5e6d0;border-radius:0 12px 12px 12px;border-left:3px solid #e63900}
-  .msg.user{background:#e63900;color:#fff;border-radius:12px 12px 0 12px;margin-left:auto}
-  .sender{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;color:#e63900}
-  .msg.user .sender{color:rgba(255,255,255,0.7)}
-  .suggestions{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 12px}
-  .sug{background:transparent;border:1.5px solid #e63900;color:#e63900;padding:7px 12px;border-radius:4px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;transition:all .2s}
-  .sug:hover{background:#e63900;color:#fff}
-  .input-area{padding:14px 16px;background:#150900;display:flex;gap:10px;border-top:1px solid #3d2010}
-  .input-area input{flex:1;border:1.5px solid #3d2010;padding:10px 14px;font-size:13px;font-family:'Inter',sans-serif;outline:none;border-radius:4px;background:#2c1a0a;color:#f5e6d0}
+  .msg.bot{background:var(--bubble);color:var(--text);border-radius:0 12px 12px 12px;border-left:3px solid var(--accent)}
+  .msg.user{background:var(--accent);color:#fff;border-radius:12px 12px 0 12px;margin-left:auto}
+  .sender{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;color:var(--accent)}
+  .msg.user .sender{color:rgba(255,255,255,.7)}
+  .typing-indicator{display:flex;gap:5px;padding:10px 14px;background:var(--bubble);border-radius:0 12px 12px 12px;width:fit-content;border-left:3px solid var(--accent)}
+  .typing-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:typingDot 1.2s ease-in-out infinite}
+  .typing-dot:nth-child(2){animation-delay:.2s}
+  .typing-dot:nth-child(3){animation-delay:.4s}
+  .suggestions{display:flex;flex-wrap:wrap;gap:7px;padding:0 14px 10px}
+  .sug{background:transparent;border:1.5px solid var(--accent);color:var(--accent);padding:7px 12px;border-radius:4px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600}
+  .sug:hover{background:var(--accent);color:#fff}
+  .input-area{padding:12px 14px;background:#150900;display:flex;gap:10px;border-top:1px solid #3d2010}
+  .input-area input{flex:1;border:1.5px solid #3d2010;padding:10px 14px;font-size:13px;font-family:'Inter',sans-serif;outline:none;border-radius:4px;background:var(--bubble);color:var(--text);transition:border-color .2s}
   .input-area input::placeholder{color:#7a5a40}
-  .input-area input:focus{border-color:#e63900}
-  .send-btn{background:#e63900;color:#fff;border:none;width:40px;height:40px;border-radius:4px;cursor:pointer;font-size:16px;transition:all .2s}
+  .input-area input:focus{border-color:var(--accent)}
+  .send-btn{background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:4px;cursor:pointer;font-size:16px;animation:glowPulse 2s ease-in-out infinite;transition:background .2s}
   .send-btn:hover{background:#ff5500}
-  .typing{display:flex;gap:5px;padding:6px 0}
-  .typing span{width:7px;height:7px;background:#e63900;border-radius:50%;animation:b 1.2s infinite}
-  .typing span:nth-child(2){animation-delay:.2s}
-  .typing span:nth-child(3){animation-delay:.4s}
-  @keyframes b{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
+  .stats-bar{display:flex;justify-content:space-around;background:#150900;padding:10px 20px;width:400px;border-radius:0 0 8px 8px;border:1px solid #3d2010;border-top:none}
+  .stat{text-align:center}
+  .stat-value{font-family:'Noto Sans JP',sans-serif;font-size:20px;color:var(--accent);font-weight:700}
+  .stat-label{font-size:9px;color:rgba(245,230,208,.4);letter-spacing:1px;text-transform:uppercase;margin-top:1px}
+  #welcome-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;animation:fadeIn .4s ease}
+  #welcome-card{background:#1a0800;border:1px solid var(--accent);border-radius:16px;padding:34px 30px;max-width:320px;width:90%;text-align:center;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 60px rgba(230,57,0,.3)}
+  #welcome-card h2{color:#fff;font-family:'Noto Sans JP',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px}
+  #welcome-card p{color:#999;font-size:13px;margin-bottom:8px;line-height:1.6}
+  #welcome-card h3{font-size:22px;font-weight:700;background:linear-gradient(90deg,var(--accent),#ff8c00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:18px}
+  .welcome-btn{background:linear-gradient(135deg,var(--accent),#ff5500);color:#fff;border:none;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:'Inter',sans-serif;transition:transform .2s}
+  .welcome-btn:hover{transform:scale(1.03)}
+  .welcome-note{color:#555;font-size:11px;margin-top:12px}
 </style>
 </head>
 <body>
-<div class="demo-banner">🍜 Démo interactive — Assistant IA The Noodle Bar Brussels</div>
+<div id="welcome-overlay">
+  <div id="welcome-card">
+    <div style="font-size:44px;margin-bottom:14px;animation:float 3s ease-in-out infinite">🍜</div>
+    <h2>Démo exclusive</h2>
+    <p>Créée spécialement pour</p>
+    <h3>The Noodle Bar Brussels</h3>
+    <p>Voici à quoi ressemblerait votre assistant IA 24h/24.<br><strong style="color:#fff">Testez-le — il répond vraiment.</strong></p>
+    <button class="welcome-btn" onclick="closeWelcome()">✨ Découvrir ma démo</button>
+    <p class="welcome-note">Sans engagement · Installation en 48h</p>
+  </div>
+</div>
 <div class="widget">
   <div class="header">
     <div class="h-brand">
@@ -50,7 +84,7 @@
   <div class="messages" id="msgs">
     <div class="msg bot">
       <div class="sender">Noodle Bar</div>
-      Irasshaimase ! 🍜 Bienvenue au Noodle Bar Brussels.<br><br>Menu, réservations, allergènes… je réponds à tout. Comment puis-je vous aider ?
+      Irasshaimase! 🍜 Bienvenue au Noodle Bar Brussels.<br>Menu, réservations, allergènes… Comment puis-je vous aider ?
     </div>
   </div>
   <div class="suggestions" id="sugs">
@@ -64,24 +98,32 @@
     <button class="send-btn" onclick="send()">→</button>
   </div>
 </div>
+<div class="stats-bar">
+  <div class="stat"><div class="stat-value" data-target="24">0</div><div class="stat-label">h/24 disponible</div></div>
+  <div class="stat"><div class="stat-value" data-target="2" data-suffix="s">0s</div><div class="stat-label">temps de réponse</div></div>
+  <div class="stat"><div class="stat-value" data-target="80" data-suffix="%">0%</div><div class="stat-label">appels évités</div></div>
+</div>
 <script>
-const R={
-  "resa":["Pour réserver, appelez-nous ou passez directement au <strong>Kaasmarkt 15</strong>, juste à côté de la Grand Place. Pour les groupes (+6 personnes), la réservation est recommandée !","On accepte les réservations pour groupes. Pour les tables individuelles, venez directement — on trouve toujours une place ! 🍜"],
-  "menu":["Notre menu voyage entre <strong>Thaïlande, Chine et Japon</strong> : bowls de nouilles fraîches, dim sum, samosas, rouleaux de printemps, plats de riz… Tout est préparé frais chaque jour !","Spécialités du moment : ramen, pad thaï, bao, gyoza et nos fameux bowls signature. Végétarien disponible. Envie d'un plat en particulier ?"],
-  "allergen":["Nous prenons les allergies très au sérieux 🙏 Nos principaux allergènes : gluten, soja, sésame, arachides, fruits à mer. Dites-nous votre allergie et on adapte votre plat au maximum.","Notez votre allergie en réservant ou à l'arrivée — notre équipe connaît chaque ingrédient. Quelles sont vos restrictions ?"],
-  "horaire":["Ouvert <strong>7j/7</strong> — midi et soir. Consultez notre page Google Maps ou Facebook pour les horaires exacts du jour. Nous sommes au <strong>Kaasmarkt 15</strong>, à 2 minutes de la Grand Place.","On est ouverts pratiquement tous les jours ! Vérifiez les horaires sur notre page Facebook ou Google. À bientôt 🍜"],
-  "groupe":["Vous êtes un groupe ? On adore ça ! Pour les tables de 6+ personnes, contactez-nous à l'avance pour garantir votre place. Menus groupes possibles sur demande.","Groupes, anniversaires, afterworks… on s'adapte ! Contactez-nous pour les grandes tablées."],
-  "vege":["Nous avons une belle sélection végétarienne : bowls tofu, rouleaux légumes, soupe miso, pad thaï végé… Dites-nous vos préférences !","Option végé disponible sur la plupart des plats. On peut aussi adapter selon vos besoins — n'hésitez pas à demander."],
-  "livraison":["Nous faisons de la livraison via les plateformes habituelles. Consultez Deliveroo ou Uber Eats pour commander depuis chez vous. 🛵","Livraison disponible ! Cherchez 'Noodle Bar Brussels' sur Deliveroo ou Uber Eats."],
-  "default":["Le Noodle Bar Brussels, c'est les saveurs d'Asie du Sud-Est à côté de la Grand Place 🗺️ Menu, réservations, infos allergènes — demandez !","Pour toute info, trouvez-nous au <strong>Kaasmarkt 15</strong> ou sur notre page Facebook/Google. On a hâte de vous faire découvrir nos saveurs ! 🍜"]
-};
+let audioCtx;
+function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
+function playReceiveSound(){try{initAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(880,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(1100,audioCtx.currentTime+.1);g.gain.setValueAtTime(.07,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.3);o.start();o.stop(audioCtx.currentTime+.3);}catch(e){}}
+function playSendSound(){try{initAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(600,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(800,audioCtx.currentTime+.08);g.gain.setValueAtTime(.05,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.2);o.start();o.stop(audioCtx.currentTime+.2);}catch(e){}}
+setTimeout(()=>{document.getElementById('welcome-overlay').style.display='flex';},1500);
+function closeWelcome(){const o=document.getElementById('welcome-overlay');o.style.animation='fadeOut .3s ease forwards';setTimeout(()=>o.style.display='none',300);}
+function animateCounters(){document.querySelectorAll('.stat-value[data-target]').forEach(el=>{const target=parseInt(el.dataset.target),suffix=el.dataset.suffix||'';let cur=0;const inc=target/40;const t=setInterval(()=>{cur+=inc;if(cur>=target){cur=target;clearInterval(t);}el.textContent=Math.floor(cur)+suffix;},40);});}
+window.addEventListener('load',()=>setTimeout(animateCounters,2500));
+const BUSINESS_CONTEXT=`Tu es l'assistant du Noodle Bar Brussels, restaurant de street food japonaise au Kaasmarkt 15, Bruxelles. Réponds en français de manière dynamique et fun, avec références japonaises occasionnelles. Tu aides pour réservations, menu, allergènes, horaires. Maximum 2 phrases avec un emoji food.`;
+async function getAIResponse(msg){
+  try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':'VOTRE_CLE_API','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:120,system:BUSINESS_CONTEXT,messages:[{role:'user',content:msg}]})});const d=await r.json();if(d.content&&d.content[0])return d.content[0].text;}catch(e){}return getFallback(msg);
+}
+const R={"resa":["Passez directement au <strong>Kaasmarkt 15</strong>, juste à côté de la Grand Place — ou appelez-nous pour les groupes 🍜","Réservations groupes bienvenues ! Venez directement pour les tables individuelles 🎉"],"menu":["Bowls de nouilles fraîches, dim sum, ramen, pad thaï, gyoza… Tout préparé frais chaque jour ! 🍜","Thaïlande, Chine, Japon dans votre bol — option végétarienne disponible 🥢"],"allergen":["Principaux allergènes : gluten, soja, sésame, arachides. Dites-nous votre allergie et on adapte 🙏","Notre équipe connaît chaque ingrédient — mentionnez votre allergie à l'arrivée 🍱"],"horaire":["Ouvert <strong>7j/7</strong>, midi et soir au Kaasmarkt 15, 2 min de la Grand Place 📍","Vérifiez nos horaires sur Google Maps ou Facebook — on est presque toujours là ! 🍜"],"default":["Noodle Bar Brussels, Kaasmarkt 15 — saveurs d'Asie du Sud-Est à 2 min de la Grand Place 🗺️","Retrouvez-nous sur Facebook ou Google pour toutes les infos ! 🍜"]};
 let ri={};
-function getR(k){ri[k]=(ri[k]||0);let r=R[k][ri[k]%R[k].length];ri[k]++;return r;}
-function detect(t){t=t.toLowerCase();if(t.match(/réserv|table|book|place/))return"resa";if(t.match(/menu|plat|carte|manger|food|noodle|ramen|pad|dim/))return"menu";if(t.match(/allergi|allergen|gluten|soja|arachide|noix|intoléran/))return"allergen";if(t.match(/horaire|heure|ouvert|fermé|quand/))return"horaire";if(t.match(/groupe|team|anniversaire|afterwork/))return"groupe";if(t.match(/végé|vegan|végétarien|sans viande/))return"vege";if(t.match(/livraison|deliver|emporter|takeaway/))return"livraison";return"default";}
+function getFallback(t){t=t.toLowerCase();let k='default';if(t.match(/réserv|table|place/))k='resa';else if(t.match(/menu|plat|manger|ramen|pad|dim/))k='menu';else if(t.match(/allergi|gluten|soja/))k='allergen';else if(t.match(/horaire|heure|ouvert/))k='horaire';ri[k]=(ri[k]||0);const r=R[k][ri[k]%R[k].length];ri[k]++;return r;}
 function addMsg(t,s,html=false){const m=document.createElement('div');m.className='msg '+s;const sn=document.createElement('div');sn.className='sender';sn.textContent=s==='bot'?'Noodle Bar':'Vous';m.appendChild(sn);const txt=document.createElement('span');if(html)txt.innerHTML=t;else txt.textContent=t;m.appendChild(txt);document.getElementById('msgs').appendChild(m);m.scrollIntoView({behavior:'smooth'});}
-function showTyping(){const t=document.createElement('div');t.className='msg bot';t.id='typing';t.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';document.getElementById('msgs').appendChild(t);t.scrollIntoView({behavior:'smooth'});}
-function ask(el){const q=el.textContent;document.getElementById('sugs').style.display='none';addMsg(q,'user');showTyping();setTimeout(()=>{document.getElementById('typing')?.remove();addMsg(getR(detect(q)),'bot',true);},900);}
-function send(){const v=document.getElementById('inp').value.trim();if(!v)return;document.getElementById('sugs').style.display='none';document.getElementById('inp').value='';addMsg(v,'user');showTyping();setTimeout(()=>{document.getElementById('typing')?.remove();addMsg(getR(detect(v)),'bot',true);},900);}
+function showTyping(){const el=document.createElement('div');el.className='msg bot';el.id='typing-el';el.innerHTML='<div class="sender">Noodle Bar</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';document.getElementById('msgs').appendChild(el);el.scrollIntoView({behavior:'smooth'});return el;}
+async function sendMsg(v){document.getElementById('sugs').style.display='none';addMsg(v,'user');playSendSound();const typing=showTyping();const[resp]=await Promise.all([getAIResponse(v),new Promise(r=>setTimeout(r,800))]);typing.remove();addMsg(resp,'bot',true);playReceiveSound();}
+function ask(el){sendMsg(el.textContent);}
+function send(){const v=document.getElementById('inp').value.trim();if(!v)return;document.getElementById('inp').value='';sendMsg(v);}
 </script>
 </body>
 </html>
