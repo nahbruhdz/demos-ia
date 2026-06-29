@@ -3,46 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Way Immo — Assistant</title>
+<title>Your Way Immo — Assistant IA</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito+Sans:wght@300;400;600&display=swap');
+  :root{--accent:#8b6f47;--accent2:#b8956a;--bg:#faf7f4;--bubble:#fff;--text:#2c1f0e}
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#f7f3ef;font-family:'Nunito Sans',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
-  .demo-banner{position:fixed;top:0;left:0;right:0;background:#8b6f47;color:#fff;text-align:center;padding:8px;font-size:11px;letter-spacing:1px;z-index:100}
-  .widget{width:400px;height:610px;display:flex;flex-direction:column;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(139,111,71,0.14);margin-top:30px}
-  .header{background:#fff;padding:22px 20px 18px;border-bottom:1px solid #ede8e0;display:flex;flex-direction:column;gap:4px}
-  .h-eyebrow{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#b8956a;font-weight:600}
-  .h-name{font-family:'Libre Baskerville',serif;font-size:22px;color:#2c1f0e;letter-spacing:0.5px}
-  .h-tagline{font-size:11px;color:#9e8670;font-style:italic;margin-top:2px}
-  .h-christine{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #ede8e0}
-  .h-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#b8956a,#8b6f47);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-family:'Libre Baskerville',serif;font-weight:700}
-  .h-cname{font-size:12px;color:#2c1f0e;font-weight:600}
+  body{background:#f7f3ef;font-family:'Nunito Sans',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;flex-direction:column}
+  @keyframes messageSlideIn{from{opacity:0;transform:translateY(12px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes typingDot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+  @keyframes glowPulse{0%,100%{box-shadow:0 0 8px rgba(139,111,71,.4)}50%{box-shadow:0 0 20px rgba(184,149,106,.7)}}
+  @keyframes buttonFadeIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes popIn{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes fadeOut{from{opacity:1}to{opacity:0}}
+  @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+  .msg{animation:messageSlideIn .35s cubic-bezier(.34,1.56,.64,1) forwards}
+  .sug{animation:buttonFadeIn .3s ease forwards;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+  .sug:hover{transform:translateY(-2px) scale(1.04)}
+  .widget{width:400px;height:620px;display:flex;flex-direction:column;background:var(--bubble);border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(139,111,71,.14);margin-top:10px}
+  .header{background:var(--bubble);padding:20px;border-bottom:1px solid #ede8e0;display:flex;flex-direction:column;gap:3px;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent));background-size:200% 100%;animation:shimmer 3s infinite linear}
+  .h-eyebrow{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent2);font-weight:600;margin-top:4px}
+  .h-name{font-family:'Libre Baskerville',serif;font-size:22px;color:var(--text)}
+  .h-tagline{font-size:11px;color:#9e8670;font-style:italic;margin-top:1px}
+  .h-christine{display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid #ede8e0}
+  .h-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-family:'Libre Baskerville',serif;font-weight:700;animation:float 3s ease-in-out infinite;flex-shrink:0}
+  .h-cname{font-size:12px;color:var(--text);font-weight:700}
   .h-ctitle{font-size:10px;color:#9e8670}
   .h-online{margin-left:auto;display:flex;align-items:center;gap:4px;font-size:10px;color:#7cb87a}
-  .h-dot{width:7px;height:7px;border-radius:50%;background:#7cb87a}
-  .messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;background:#faf7f4}
+  .h-dot{width:7px;height:7px;border-radius:50%;background:#7cb87a;box-shadow:0 0 5px #7cb87a}
+  .messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--bg);scroll-behavior:smooth}
   .msg{max-width:85%;padding:12px 16px;font-size:13px;line-height:1.65}
-  .msg.bot{background:#fff;color:#2c1f0e;border-radius:0 12px 12px 12px;box-shadow:0 2px 8px rgba(139,111,71,0.08);border:1px solid #ede8e0}
-  .msg.user{background:#8b6f47;color:#fff;border-radius:12px 12px 0 12px;margin-left:auto}
-  .sender{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;color:#b8956a}
-  .msg.user .sender{color:rgba(255,255,255,0.7)}
-  .suggestions{display:flex;flex-wrap:wrap;gap:7px;padding:0 18px 12px}
-  .sug{background:#fff;border:1.5px solid #e0d4c4;color:#8b6f47;padding:7px 12px;border-radius:4px;font-size:11.5px;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-weight:600;transition:all .2s}
-  .sug:hover{background:#8b6f47;color:#fff;border-color:#8b6f47}
-  .input-area{padding:14px 18px;background:#fff;display:flex;gap:10px;border-top:1px solid #ede8e0}
-  .input-area input{flex:1;border:1.5px solid #e0d4c4;padding:10px 14px;font-size:13px;font-family:'Nunito Sans',sans-serif;outline:none;border-radius:4px;color:#2c1f0e;background:#faf7f4}
-  .input-area input:focus{border-color:#8b6f47}
-  .send-btn{background:#8b6f47;color:#fff;border:none;width:40px;height:40px;border-radius:4px;cursor:pointer;font-size:16px;transition:all .2s}
-  .send-btn:hover{background:#b8956a}
-  .typing{display:flex;gap:5px;padding:6px 0}
-  .typing span{width:7px;height:7px;background:#b8956a;border-radius:50%;animation:b 1.2s infinite}
-  .typing span:nth-child(2){animation-delay:.2s}
-  .typing span:nth-child(3){animation-delay:.4s}
-  @keyframes b{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
+  .msg.bot{background:var(--bubble);color:var(--text);border-radius:0 12px 12px 12px;box-shadow:0 2px 8px rgba(139,111,71,.08);border:1px solid #ede8e0}
+  .msg.user{background:var(--accent);color:#fff;border-radius:12px 12px 0 12px;margin-left:auto}
+  .sender{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;color:var(--accent2)}
+  .msg.user .sender{color:rgba(255,255,255,.7)}
+  .typing-indicator{display:flex;gap:5px;padding:10px 14px;background:var(--bubble);border-radius:0 12px 12px 12px;width:fit-content;box-shadow:0 2px 8px rgba(139,111,71,.08);border:1px solid #ede8e0}
+  .typing-dot{width:7px;height:7px;border-radius:50%;background:var(--accent2);animation:typingDot 1.2s ease-in-out infinite}
+  .typing-dot:nth-child(2){animation-delay:.2s}
+  .typing-dot:nth-child(3){animation-delay:.4s}
+  .suggestions{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 10px}
+  .sug{background:var(--bubble);border:1.5px solid #e0d4c4;color:var(--accent);padding:7px 12px;border-radius:4px;font-size:11.5px;cursor:pointer;font-family:'Nunito Sans',sans-serif;font-weight:600}
+  .sug:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .input-area{padding:12px 16px;background:var(--bubble);display:flex;gap:10px;border-top:1px solid #ede8e0}
+  .input-area input{flex:1;border:1.5px solid #e0d4c4;padding:10px 14px;font-size:13px;font-family:'Nunito Sans',sans-serif;outline:none;border-radius:4px;color:var(--text);background:var(--bg);transition:border-color .2s}
+  .input-area input:focus{border-color:var(--accent)}
+  .send-btn{background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:4px;cursor:pointer;font-size:16px;animation:glowPulse 2s ease-in-out infinite;transition:background .2s}
+  .send-btn:hover{background:var(--accent2)}
+  .stats-bar{display:flex;justify-content:space-around;background:var(--accent);padding:10px 20px;width:400px;border-radius:0 0 10px 10px}
+  .stat{text-align:center}
+  .stat-value{font-family:'Libre Baskerville',serif;font-size:20px;color:#f5e6d0}
+  .stat-label{font-size:9px;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-top:1px}
+  #welcome-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;animation:fadeIn .4s ease}
+  #welcome-card{background:#1a1008;border:1px solid var(--accent2);border-radius:20px;padding:34px 30px;max-width:320px;width:90%;text-align:center;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 60px rgba(139,111,71,.3)}
+  #welcome-card h2{color:#fff;font-family:'Libre Baskerville',serif;font-size:22px;margin-bottom:6px;font-weight:400}
+  #welcome-card p{color:#999;font-size:13px;margin-bottom:8px;line-height:1.6}
+  #welcome-card h3{font-family:'Libre Baskerville',serif;font-size:20px;font-style:italic;background:linear-gradient(90deg,var(--accent2),#f0d8b0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:18px}
+  .welcome-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:'Nunito Sans',sans-serif;transition:transform .2s}
+  .welcome-btn:hover{transform:scale(1.03)}
+  .welcome-note{color:#555;font-size:11px;margin-top:12px}
 </style>
 </head>
 <body>
-<div class="demo-banner">✦ Démo interactive — Assistant IA Your Way Immo · Christine Seeber</div>
+<div id="welcome-overlay">
+  <div id="welcome-card">
+    <div style="font-size:44px;margin-bottom:14px;animation:float 3s ease-in-out infinite">✦</div>
+    <h2>Démo exclusive</h2>
+    <p>Créée spécialement pour</p>
+    <h3>Your Way Immo</h3>
+    <p>Voici à quoi ressemblerait votre assistant IA 24h/24.<br><strong style="color:#fff">Testez-le — il répond vraiment.</strong></p>
+    <button class="welcome-btn" onclick="closeWelcome()">✨ Découvrir ma démo</button>
+    <p class="welcome-note">Sans engagement · Installation en 48h</p>
+  </div>
+</div>
 <div class="widget">
   <div class="header">
     <span class="h-eyebrow">Boutique Real Estate</span>
@@ -60,37 +94,46 @@
   <div class="messages" id="msgs">
     <div class="msg bot">
       <div class="sender">Christine</div>
-      Bonjour, je suis Christine de <strong>Your Way Immo</strong>. ✦<br><br>Mon approche : personnelle, discrète et sur mesure. Comment puis-je vous accompagner dans votre projet immobilier ?
+      Bonjour, je suis Christine de <strong>Your Way Immo</strong>. ✦<br>Approche personnelle et discrète. Comment puis-je vous accompagner ?
     </div>
   </div>
   <div class="suggestions" id="sugs">
     <button class="sug" onclick="ask(this)">Estimation gratuite</button>
     <button class="sug" onclick="ask(this)">Vendre mon bien</button>
     <button class="sug" onclick="ask(this)">Biens disponibles</button>
-    <button class="sug" onclick="ask(this)">Contacts Christine</button>
+    <button class="sug" onclick="ask(this)">Contacter Christine</button>
   </div>
   <div class="input-area">
     <input id="inp" placeholder="Parlez-moi de votre projet…" onkeydown="if(event.key==='Enter')send()">
     <button class="send-btn" onclick="send()">→</button>
   </div>
 </div>
+<div class="stats-bar">
+  <div class="stat"><div class="stat-value" data-target="24">0</div><div class="stat-label">h/24 disponible</div></div>
+  <div class="stat"><div class="stat-value" data-target="40" data-suffix="%">0%</div><div class="stat-label">+ leads captés</div></div>
+  <div class="stat"><div class="stat-value" data-target="48" data-suffix="h">0h</div><div class="stat-label">installation</div></div>
+</div>
 <script>
-const R={
-  "estim":["Je propose des <strong>estimations personnalisées et gratuites</strong>, basées sur une analyse fine du marché à Woluwe et dans les communes environnantes. Contactez-moi au <strong>+32 2 772 49 28</strong> ou +32 486 58 32 54.","Chaque bien est unique — mon estimation est toujours sur mesure, pas un simple algorithme. Quel type de bien souhaitez-vous faire estimer ?"],
-  "vente":["Vendre avec Your Way Immo, c'est un accompagnement discret et personnalisé de A à Z : valorisation, photos, réseau qualifié, négociation et suivi notarial. Contactez Christine au <strong>+32 486 58 32 54</strong>.","Ma méthode boutique : peu de biens, beaucoup d'attention. Chaque vente est traitée avec soin. Parlez-moi de votre bien."],
-  "achat":["Je dispose d'un portefeuille sélectif de biens à Woluwe-Saint-Pierre et dans les quartiers résidentiels de Bruxelles. Dites-moi votre projet et je vous proposerai les opportunités correspondantes.","Grâce à mon réseau international (Belgique & Autriche), j'accède parfois à des biens off-market. Quel est votre budget et votre quartier idéal ?"],
-  "contact":["Christine Seeber — ☎️ <strong>+32 2 772 49 28</strong> · 📱 +32 486 58 32 54 · 📧 christine@yourwayimmo.com. Avenue du Tennis 29, Woluwe-Saint-Pierre.","Je vous réponds personnellement. Appelez-moi au <strong>+32 486 58 32 54</strong> ou écrivez à christine@yourwayimmo.com. ✦"],
-  "international":["J'ai des contacts immobiliers en Autriche et en Europe. Si vous cherchez à acheter ou vendre à l'international, je peux vous accompagner avec mon réseau.","Your Way Immo, c'est aussi l'immobilier à l'international — particulièrement en Autriche. Parlez-moi de votre projet."],
-  "woluwe":["Je suis spécialisée dans le marché de Woluwe-Saint-Pierre et Woluwe-Saint-Lambert, des quartiers résidentiels que je connais parfaitement depuis des années.","Woluwe, Schaerbeek, Etterbeek… je travaille sur les quartiers résidentiels bruxellois de qualité. Votre projet m'intéresse !"],
-  "default":["Your Way Immo — une approche boutique et personnalisée. Estimation, vente, achat, conseil. Christine Seeber, +32 486 58 32 54 ou christine@yourwayimmo.com. ✦","Je suis là pour vous accompagner dans votre projet immobilier avec discrétion et professionnalisme. Dites-m'en plus sur ce que vous recherchez !"]
-};
+let audioCtx;
+function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
+function playReceiveSound(){try{initAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(880,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(1100,audioCtx.currentTime+.1);g.gain.setValueAtTime(.07,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.3);o.start();o.stop(audioCtx.currentTime+.3);}catch(e){}}
+function playSendSound(){try{initAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(600,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(800,audioCtx.currentTime+.08);g.gain.setValueAtTime(.05,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.2);o.start();o.stop(audioCtx.currentTime+.2);}catch(e){}}
+setTimeout(()=>{document.getElementById('welcome-overlay').style.display='flex';},1500);
+function closeWelcome(){const o=document.getElementById('welcome-overlay');o.style.animation='fadeOut .3s ease forwards';setTimeout(()=>o.style.display='none',300);}
+function animateCounters(){document.querySelectorAll('.stat-value[data-target]').forEach(el=>{const target=parseInt(el.dataset.target),suffix=el.dataset.suffix||'';let cur=0;const inc=target/40;const t=setInterval(()=>{cur+=inc;if(cur>=target){cur=target;clearInterval(t);}el.textContent=Math.floor(cur)+suffix;},40);});}
+window.addEventListener('load',()=>setTimeout(animateCounters,2500));
+const BUSINESS_CONTEXT=`Tu es l'assistante de Your Way Immo, agence immobilière boutique premium à Bruxelles, fondée par Christine Seeber. Réponds en français de manière élégante, premium et personnalisée. Tu aides pour estimations, biens de prestige, accompagnement personnalisé, réseau international (Belgique et Autriche). Maximum 2 phrases avec un emoji subtil. Tel: +32 486 58 32 54. Email: christine@yourwayimmo.com.`;
+async function getAIResponse(msg){
+  try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':'VOTRE_CLE_API','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:120,system:BUSINESS_CONTEXT,messages:[{role:'user',content:msg}]})});const d=await r.json();if(d.content&&d.content[0])return d.content[0].text;}catch(e){}return getFallback(msg);
+}
+const R={"estim":["Estimations <strong>personnalisées et gratuites</strong>, basées sur le marché local de Woluwe. Contactez Christine au <strong>+32 486 58 32 54</strong> ✦","Chaque bien est unique — mon estimation est sur mesure, pas un algorithme. Quel type de bien ?"],"vente":["Accompagnement discret de A à Z : valorisation, photos, réseau qualifié, négociation. Tel: <strong>+32 486 58 32 54</strong> ✦","Méthode boutique : peu de biens, beaucoup d'attention. Parlez-moi de votre bien."],"achat":["Portefeuille sélectif à Woluwe-Saint-Pierre + réseau off-market international. Quel est votre projet ? 🔑","Grâce à mon réseau Belgique & Autriche, j'accède à des opportunités exclusives. Budget et quartier idéal ?"],"contact":["Christine Seeber · ☎️ <strong>+32 486 58 32 54</strong> · christine@yourwayimmo.com · Avenue du Tennis 29, Woluwe ✦","Je vous réponds personnellement — appelez ou écrivez, je suis disponible pour vous 🤝"],"default":["Your Way Immo — approche boutique, personnelle et discrète à Woluwe-Saint-Pierre. Christine Seeber, <strong>+32 486 58 32 54</strong> ✦","Dites-moi votre projet et je vous apporterai une réponse sur mesure 🏡"]};
 let ri={};
-function getR(k){ri[k]=(ri[k]||0);let r=R[k][ri[k]%R[k].length];ri[k]++;return r;}
-function detect(t){t=t.toLowerCase();if(t.match(/estim|valeur|évaluer|combien/))return"estim";if(t.match(/vendre|vente|céder|mettre en/))return"vente";if(t.match(/achat|acheter|cherche|buy|bien disponible/))return"achat";if(t.match(/contact|téléphone|email|christine|appel/))return"contact";if(t.match(/international|autriche|étranger/))return"international";if(t.match(/woluwe|quartier|commune/))return"woluwe";return"default";}
+function getFallback(t){t=t.toLowerCase();let k='default';if(t.match(/estim|valeur|évaluer|combien/))k='estim';else if(t.match(/vendre|vente|céder/))k='vente';else if(t.match(/achat|acheter|cherche|disponible/))k='achat';else if(t.match(/contact|christine|téléphone|email/))k='contact';ri[k]=(ri[k]||0);const r=R[k][ri[k]%R[k].length];ri[k]++;return r;}
 function addMsg(t,s,html=false){const m=document.createElement('div');m.className='msg '+s;const sn=document.createElement('div');sn.className='sender';sn.textContent=s==='bot'?'Christine':'Vous';m.appendChild(sn);const txt=document.createElement('span');if(html)txt.innerHTML=t;else txt.textContent=t;m.appendChild(txt);document.getElementById('msgs').appendChild(m);m.scrollIntoView({behavior:'smooth'});}
-function showTyping(){const t=document.createElement('div');t.className='msg bot';t.id='typing';t.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';document.getElementById('msgs').appendChild(t);t.scrollIntoView({behavior:'smooth'});}
-function ask(el){const q=el.textContent;document.getElementById('sugs').style.display='none';addMsg(q,'user');showTyping();setTimeout(()=>{document.getElementById('typing')?.remove();addMsg(getR(detect(q)),'bot',true);},900);}
-function send(){const v=document.getElementById('inp').value.trim();if(!v)return;document.getElementById('sugs').style.display='none';document.getElementById('inp').value='';addMsg(v,'user');showTyping();setTimeout(()=>{document.getElementById('typing')?.remove();addMsg(getR(detect(v)),'bot',true);},900);}
+function showTyping(){const el=document.createElement('div');el.className='msg bot';el.id='typing-el';el.innerHTML='<div class="sender">Christine</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';document.getElementById('msgs').appendChild(el);el.scrollIntoView({behavior:'smooth'});return el;}
+async function sendMsg(v){document.getElementById('sugs').style.display='none';addMsg(v,'user');playSendSound();const typing=showTyping();const[resp]=await Promise.all([getAIResponse(v),new Promise(r=>setTimeout(r,800))]);typing.remove();addMsg(resp,'bot',true);playReceiveSound();}
+function ask(el){sendMsg(el.textContent);}
+function send(){const v=document.getElementById('inp').value.trim();if(!v)return;document.getElementById('inp').value='';sendMsg(v);}
 </script>
 </body>
 </html>
