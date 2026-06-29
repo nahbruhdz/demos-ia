@@ -3,172 +3,90 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Démo IA — Clinique Dentaire Lemonnier</title>
+<title>Clinique Dentaire Lemonnier — Assistant</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 100%);
-    min-height: 100vh; display: flex; align-items: center;
-    justify-content: center; padding: 20px;
-  }
-  .demo-container { max-width: 420px; width: 100%; }
-  .header { text-align: center; margin-bottom: 24px; }
-  .header h1 { color: #fff; font-size: 22px; font-weight: 700; }
-  .header p { color: #8888aa; font-size: 14px; margin-top: 6px; }
-  .badge {
-    display: inline-block;
-    background: linear-gradient(90deg, #6c63ff, #3ecfcf);
-    color: white; font-size: 11px; font-weight: 600;
-    padding: 4px 12px; border-radius: 20px; margin-bottom: 12px;
-    text-transform: uppercase; letter-spacing: 1px;
-  }
-  .chat-window {
-    background: #12122a; border-radius: 20px;
-    border: 1px solid #2a2a5a; overflow: hidden;
-    box-shadow: 0 20px 60px rgba(108, 99, 255, 0.2);
-  }
-  .chat-header {
-    background: linear-gradient(90deg, #6c63ff, #3ecfcf);
-    padding: 16px 20px; display: flex; align-items: center; gap: 12px;
-  }
-  .avatar {
-    width: 38px; height: 38px; background: rgba(255,255,255,0.2);
-    border-radius: 50%; display: flex; align-items: center;
-    justify-content: center; font-size: 18px;
-  }
-  .chat-header-info h3 { color: white; font-size: 15px; font-weight: 600; }
-  .chat-header-info p { color: rgba(255,255,255,0.8); font-size: 12px; }
-  .status-dot {
-    width: 8px; height: 8px; background: #4eff91; border-radius: 50%;
-    display: inline-block; margin-right: 4px; animation: pulse 2s infinite;
-  }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-  .chat-messages {
-    padding: 20px; display: flex; flex-direction: column;
-    gap: 14px; min-height: 300px;
-  }
-  .message { display: flex; gap: 10px; align-items: flex-start; }
-  .message.user { flex-direction: row-reverse; }
-  .msg-avatar {
-    width: 30px; height: 30px; border-radius: 50%;
-    background: linear-gradient(135deg, #6c63ff, #3ecfcf);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; flex-shrink: 0;
-  }
-  .msg-bubble {
-    max-width: 75%; padding: 10px 14px; border-radius: 16px;
-    font-size: 14px; line-height: 1.5;
-  }
-  .message.bot .msg-bubble { background: #1e1e42; color: #e0e0ff; border-bottom-left-radius: 4px; }
-  .message.user .msg-bubble {
-    background: linear-gradient(135deg, #6c63ff, #3ecfcf);
-    color: white; border-bottom-right-radius: 4px;
-  }
-  .quick-replies { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 16px; }
-  .quick-reply {
-    background: transparent; border: 1px solid #6c63ff; color: #6c63ff;
-    padding: 6px 14px; border-radius: 20px; font-size: 13px;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .quick-reply:hover { background: #6c63ff; color: white; }
-  .chat-input {
-    display: flex; gap: 10px; padding: 16px 20px;
-    border-top: 1px solid #2a2a5a;
-  }
-  .chat-input input {
-    flex: 1; background: #1e1e42; border: 1px solid #3a3a6a;
-    border-radius: 12px; padding: 10px 14px; color: white;
-    font-size: 14px; outline: none;
-  }
-  .send-btn {
-    background: linear-gradient(135deg, #6c63ff, #3ecfcf);
-    border: none; border-radius: 12px; width: 42px; height: 42px;
-    cursor: pointer; color: white; font-size: 18px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .stats-bar {
-    display: flex; justify-content: space-around; padding: 16px 20px;
-    background: #0d0d24; border-top: 1px solid #2a2a5a;
-  }
-  .stat { text-align: center; }
-  .stat-value { color: #6c63ff; font-size: 18px; font-weight: 700; }
-  .stat-label { color: #8888aa; font-size: 11px; margin-top: 2px; }
-  .cta-section { text-align: center; margin-top: 24px; }
-  .cta-btn {
-    background: linear-gradient(135deg, #6c63ff, #3ecfcf);
-    color: white; border: none; padding: 14px 32px; border-radius: 14px;
-    font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 10px;
-  }
-  .cta-sub { color: #8888aa; font-size: 12px; }
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500;600&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#eef4fb;font-family:'Inter',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
+  .demo-banner{position:fixed;top:0;left:0;right:0;background:#1565c0;color:#fff;text-align:center;padding:8px;font-size:11px;letter-spacing:1px;z-index:100}
+  .widget{width:400px;height:610px;display:flex;flex-direction:column;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 16px 50px rgba(21,101,192,0.12);margin-top:30px}
+  .header{background:linear-gradient(135deg,#1565c0,#1e88e5);padding:20px;display:flex;align-items:center;gap:14px}
+  .h-icon{width:44px;height:44px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .h-info{display:flex;flex-direction:column}
+  .h-name{font-size:16px;font-weight:600;color:#fff;letter-spacing:0.3px}
+  .h-sub{font-size:11px;color:rgba(255,255,255,0.8);margin-top:2px}
+  .h-status{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,0.9)}
+  .h-dot{width:7px;height:7px;border-radius:50%;background:#4caf50}
+  .messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;background:#f5f9ff}
+  .msg{max-width:85%;padding:12px 16px;font-size:13px;line-height:1.65}
+  .msg.bot{background:#fff;color:#263238;border-radius:0 12px 12px 12px;box-shadow:0 2px 8px rgba(21,101,192,0.08);border:1px solid #e3eef9}
+  .msg.user{background:#1565c0;color:#fff;border-radius:12px 12px 0 12px;margin-left:auto}
+  .sender{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;color:#1565c0}
+  .msg.user .sender{color:rgba(255,255,255,0.7)}
+  .urgent{background:#fff3e0;border:1.5px solid #ff9800;border-radius:8px;padding:12px 14px;margin:0 18px 12px;font-size:12px;color:#e65100;display:flex;align-items:center;gap:8px}
+  .suggestions{display:flex;flex-wrap:wrap;gap:7px;padding:0 18px 12px}
+  .sug{background:#fff;border:1.5px solid #bbdefb;color:#1565c0;padding:7px 12px;border-radius:20px;font-size:11.5px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:all .2s}
+  .sug:hover{background:#1565c0;color:#fff;border-color:#1565c0}
+  .input-area{padding:14px 18px;background:#fff;display:flex;gap:10px;border-top:1px solid #e3eef9}
+  .input-area input{flex:1;border:1.5px solid #bbdefb;padding:10px 14px;font-size:13px;font-family:'Inter',sans-serif;outline:none;border-radius:25px;color:#263238}
+  .input-area input:focus{border-color:#1565c0}
+  .send-btn{background:#1565c0;color:#fff;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:16px;transition:all .2s}
+  .send-btn:hover{background:#1e88e5}
+  .typing{display:flex;gap:5px;padding:6px 0}
+  .typing span{width:7px;height:7px;background:#1565c0;border-radius:50%;animation:b 1.2s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}
+  .typing span:nth-child(3){animation-delay:.4s}
+  @keyframes b{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
 </style>
 </head>
 <body>
-<div class="demo-container">
+<div class="demo-banner">🦷 Démo interactive — Assistant IA Clinique Dentaire Lemonnier</div>
+<div class="widget">
   <div class="header">
-    <div class="badge">🤖 Démo Exclusive — Clinique Dentaire Lemonnier</div>
-    <h1>Votre Assistant IA 24/7</h1>
-    <p>Rendez-vous, urgences et FAQ — automatisés</p>
+    <div class="h-icon">🦷</div>
+    <div class="h-info">
+      <span class="h-name">Clinique Dentaire Lemonnier</span>
+      <span class="h-sub">Bd Maurice Lemonnier 217 · Bruxelles</span>
+    </div>
+    <div class="h-status"><span class="h-dot"></span> Disponible</div>
   </div>
-  <div class="chat-window">
-    <div class="chat-header">
-      <div class="avatar">🦷</div>
-      <div class="chat-header-info">
-        <h3>Assistant Clinique Lemonnier</h3>
-        <p><span class="status-dot"></span>En ligne — Répond en 2 secondes</p>
-      </div>
-    </div>
-    <div class="chat-messages">
-      <div class="message bot">
-        <div class="msg-avatar">🦷</div>
-        <div class="msg-bubble">Bonjour ! Je suis l'assistant de la Clinique Dentaire Lemonnier, Bd Maurice Lemonnier 217. Rendez-vous, urgences ou questions — je suis là 24h/24 ! 😊</div>
-      </div>
-      <div class="message user">
-        <div class="msg-avatar">👤</div>
-        <div class="msg-bubble">J'ai mal aux dents depuis hier soir, c'est urgent</div>
-      </div>
-      <div class="message bot">
-        <div class="msg-avatar">🦷</div>
-        <div class="msg-bubble">Je comprends, une urgence dentaire c'est stressant ! La clinique gère les urgences. Appelez le +32 2 268 51 45 dès l'ouverture à 10h, ou je peux vous réserver le premier créneau disponible demain matin. Que préférez-vous ? 🚨</div>
-      </div>
-      <div class="message user">
-        <div class="msg-avatar">👤</div>
-        <div class="msg-bubble">Réservez-moi un créneau demain</div>
-      </div>
-      <div class="message bot">
-        <div class="msg-avatar">🦷</div>
-        <div class="msg-bubble">Parfait. J'ai un créneau disponible demain à 10h15 pour une urgence. Puis-je avoir votre prénom pour confirmer la réservation ? ✅</div>
-      </div>
-    </div>
-    <div class="quick-replies">
-      <button class="quick-reply">🚨 Urgence dentaire</button>
-      <button class="quick-reply">📅 Prendre RDV</button>
-      <button class="quick-reply">💰 Tarifs & remboursements</button>
-      <button class="quick-reply">⏰ Horaires</button>
-    </div>
-    <div class="chat-input">
-      <input type="text" placeholder="Écrivez votre message...">
-      <button class="send-btn">➤</button>
-    </div>
-    <div class="stats-bar">
-      <div class="stat">
-        <div class="stat-value">24/7</div>
-        <div class="stat-label">Disponible</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">2s</div>
-        <div class="stat-label">Réponse</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">-70%</div>
-        <div class="stat-label">No-shows</div>
-      </div>
+  <div class="urgent">⚠️ <strong>Urgence dentaire ?</strong> Appelez le +32 2 268 51 45</div>
+  <div class="messages" id="msgs">
+    <div class="msg bot">
+      <div class="sender">Clinique Lemonnier</div>
+      Bonjour ! Je suis l'assistant de la Clinique Dentaire Lemonnier. 🦷<br><br>Je peux vous aider à prendre rendez-vous, vous informer sur nos soins ou répondre à vos questions.
     </div>
   </div>
-  <div class="cta-section">
-    <button class="cta-btn">🚀 Je veux ce système pour ma clinique</button>
-    <p class="cta-sub">Installation en 48h · Sans engagement · Démo offerte</p>
+  <div class="suggestions" id="sugs">
+    <button class="sug" onclick="ask(this)">Prendre RDV</button>
+    <button class="sug" onclick="ask(this)">Urgence dentaire</button>
+    <button class="sug" onclick="ask(this)">Implants</button>
+    <button class="sug" onclick="ask(this)">Blanchiment</button>
+    <button class="sug" onclick="ask(this)">Mutuelle</button>
+  </div>
+  <div class="input-area">
+    <input id="inp" placeholder="Votre question…" onkeydown="if(event.key==='Enter')send()">
+    <button class="send-btn" onclick="send()">→</button>
   </div>
 </div>
+<script>
+const R={
+  "rdv":["Pour prendre rendez-vous, utilisez notre système en ligne sur <strong>rendez-vous.clinique-dentaire-bruxelles.be</strong> ou appelez le <strong>+32 2 268 51 45</strong>. Nous répondons aussi au GSM : +32 498 111 828.","Réservez en ligne 24h/24 via notre agenda en ligne, ou appelez-nous directement. Quel soin souhaitez-vous ?"],
+  "urgence":["🚨 En cas d'urgence, appelez immédiatement le <strong>+32 2 268 51 45</strong> ou le <strong>+32 498 111 828</strong>. Nos dentistes d'urgence réduisent la douleur le plus rapidement possible.","Pour toute urgence dentaire (douleur aiguë, dent cassée, abcès), contactez-nous au <strong>+32 2 268 51 45</strong> — même en dehors des heures habituelles si vous êtes patient chez nous."],
+  "implant":["Les implants dentaires remplacent les dents manquantes de façon durable et naturelle. Consultation gratuite avec nos spécialistes. Appelez le <strong>+32 2 268 51 45</strong> pour en savoir plus.","Nos implants dentaires : une solution permanente, esthétique et fonctionnelle. Résultats visibles dès la pose de la couronne. Souhaitez-vous prendre un premier RDV de diagnostic ?"],
+  "blanchiment":["Nous proposons des soins de blanchiment dentaire professionnels, bien plus efficaces que les kits en pharmacie. Résultat visible dès la première séance. RDV au <strong>+32 2 268 51 45</strong>.","Blanchiment en cabinet : safe, rapide et durable. Consultez-nous pour connaître les options adaptées à la sensibilité de vos dents."],
+  "mutuelle":["Nous sommes <strong>conventionnés par toutes les mutuelles belges</strong>. Aucun supplément sur nos consultations de base. Votre remboursement s'applique normalement.","Bonne nouvelle : aucun supplément sur nos soins conventionnés. Votre mutuelle couvre les consultations selon les barèmes INAMI habituels."],
+  "invisalign":["Invisalign permet de redresser les dents sans appareil métallique — discret, confortable, efficace. Consultation de diagnostic gratuite. Appelez le <strong>+32 2 268 51 45</strong>.","L'Invisalign est notre spécialité orthodontique. Gouttières transparentes, résultats progressifs. Idéal pour adultes et adolescents."],
+  "horaire":["Contactez-nous au <strong>+32 2 268 51 45</strong> pour connaître nos créneaux disponibles. Notre système de RDV en ligne indique les disponibilités en temps réel.","Disponibilités en ligne sur <strong>rendez-vous.clinique-dentaire-bruxelles.be</strong>. Ou appelez le +32 2 268 51 45."],
+  "default":["La Clinique Dentaire Lemonnier propose : soins complets, implants, blanchiment, orthodontie, Invisalign, pédodontie. Conventionnés toutes mutuelles. Appelez le <strong>+32 2 268 51 45</strong> ou réservez en ligne.","Pour toute question, notre équipe est joignable au <strong>+32 2 268 51 45</strong> ou par email : contact@cliniquedentairelemonnier.be 🦷"]
+};
+let ri={};
+function getR(k){ri[k]=(ri[k]||0);let r=R[k][ri[k]%R[k].length];ri[k]++;return r;}
+function detect(t){t=t.toLowerCase();if(t.match(/rdv|rendez|réserv|appointment/))return"rdv";if(t.match(/urgence|urgent|douleur|cassé|abcès|saigne/))return"urgence";if(t.match(/implant/))return"implant";if(t.match(/blanchi|whitening|blanc/))return"blanchiment";if(t.match(/mutuelle|remboursement|sécu|inami/))return"mutuelle";if(t.match(/invisalign|gouttière|bague|orthodont/))return"invisalign";if(t.match(/horaire|heure|ouvert|fermé/))return"horaire";return"default";}
+function addMsg(t,s,html=false){const m=document.createElement('div');m.className='msg '+s;const sn=document.createElement('div');sn.className='sender';sn.textContent=s==='bot'?'Clinique Lemonnier':'Vous';m.appendChild(sn);const txt=document.createElement('span');if(html)txt.innerHTML=t;else txt.textContent=t;m.appendChild(txt);document.getElementById('msgs').appendChild(m);m.scrollIntoView({behavior:'smooth'});}
+function showTyping(){const t=document.createElement('div');t.className='msg bot';t.id='typing';t.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';document.getElementById('msgs').appendChild(t);t.scrollIntoView({behavior:'smooth'});}
+function ask(el){const q=el.textContent;document.getElementById('sugs').style.display='none';addMsg(q,'user');showTyping();setTimeout(()=>{document.getElementById('typing')?.remove();addMsg(getR(detect(q)),'bot',true);},900);}
+function send(){const v=document.getElementById('inp').value.trim();if(!v)return;document.getElementById('sugs').style.display='none';document.getElementById('inp').value='';addMsg(v,'user');showTyping();setTimeout(()=>{document.getElementById('typing')?.remove();addMsg(getR(detect(v)),'bot',true);},900);}
+</script>
 </body>
 </html>
