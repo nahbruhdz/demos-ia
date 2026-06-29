@@ -3,44 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clinique Dentaire Lemonnier — Assistant</title>
+<title>Clinique Dentaire Lemonnier — Assistant IA</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+  :root{--accent:#1565c0;--accent2:#1e88e5;--bg:#f5f9ff;--bubble:#fff;--text:#263238}
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#eef4fb;font-family:'Inter',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
-  .demo-banner{position:fixed;top:0;left:0;right:0;background:#1565c0;color:#fff;text-align:center;padding:8px;font-size:11px;letter-spacing:1px;z-index:100}
-  .widget{width:400px;height:610px;display:flex;flex-direction:column;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 16px 50px rgba(21,101,192,0.12);margin-top:30px}
-  .header{background:linear-gradient(135deg,#1565c0,#1e88e5);padding:20px;display:flex;align-items:center;gap:14px}
-  .h-icon{width:44px;height:44px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  body{background:#eef4fb;font-family:'Inter',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;flex-direction:column}
+  @keyframes messageSlideIn{from{opacity:0;transform:translateY(12px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes typingDot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+  @keyframes glowPulse{0%,100%{box-shadow:0 0 8px rgba(21,101,192,.4)}50%{box-shadow:0 0 20px rgba(21,101,192,.8)}}
+  @keyframes buttonFadeIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes popIn{from{opacity:0;transform:scale(.8) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes fadeOut{from{opacity:1}to{opacity:0}}
+  @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+  .msg{animation:messageSlideIn .35s cubic-bezier(.34,1.56,.64,1) forwards}
+  .sug{animation:buttonFadeIn .3s ease forwards;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+  .sug:hover{transform:translateY(-2px) scale(1.04)}
+  .widget{width:400px;height:620px;display:flex;flex-direction:column;background:var(--bubble);border-radius:12px;overflow:hidden;box-shadow:0 16px 50px rgba(21,101,192,.12);margin-top:10px}
+  .header{background:linear-gradient(135deg,var(--accent),var(--accent2));padding:18px 20px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden}
+  .header::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);background-size:200% 100%;animation:shimmer 3s infinite linear}
+  .h-icon{width:42px;height:42px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;animation:float 3s ease-in-out infinite}
   .h-info{display:flex;flex-direction:column}
-  .h-name{font-size:16px;font-weight:600;color:#fff;letter-spacing:0.3px}
-  .h-sub{font-size:11px;color:rgba(255,255,255,0.8);margin-top:2px}
-  .h-status{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,0.9)}
-  .h-dot{width:7px;height:7px;border-radius:50%;background:#4caf50}
-  .messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;background:#f5f9ff}
+  .h-name{font-size:15px;font-weight:600;color:#fff}
+  .h-sub{font-size:10px;color:rgba(255,255,255,.8);margin-top:1px}
+  .h-status{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(255,255,255,.9)}
+  .h-dot{width:7px;height:7px;border-radius:50%;background:#4caf50;box-shadow:0 0 6px #4caf50}
+  .urgent{background:#fff3e0;border:1.5px solid #ff9800;border-radius:8px;padding:10px 14px;margin:12px 14px 4px;font-size:12px;color:#e65100;display:flex;align-items:center;gap:8px}
+  .messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg);scroll-behavior:smooth}
   .msg{max-width:85%;padding:12px 16px;font-size:13px;line-height:1.65}
-  .msg.bot{background:#fff;color:#263238;border-radius:0 12px 12px 12px;box-shadow:0 2px 8px rgba(21,101,192,0.08);border:1px solid #e3eef9}
-  .msg.user{background:#1565c0;color:#fff;border-radius:12px 12px 0 12px;margin-left:auto}
-  .sender{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;color:#1565c0}
-  .msg.user .sender{color:rgba(255,255,255,0.7)}
-  .urgent{background:#fff3e0;border:1.5px solid #ff9800;border-radius:8px;padding:12px 14px;margin:0 18px 12px;font-size:12px;color:#e65100;display:flex;align-items:center;gap:8px}
-  .suggestions{display:flex;flex-wrap:wrap;gap:7px;padding:0 18px 12px}
-  .sug{background:#fff;border:1.5px solid #bbdefb;color:#1565c0;padding:7px 12px;border-radius:20px;font-size:11.5px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:all .2s}
-  .sug:hover{background:#1565c0;color:#fff;border-color:#1565c0}
-  .input-area{padding:14px 18px;background:#fff;display:flex;gap:10px;border-top:1px solid #e3eef9}
-  .input-area input{flex:1;border:1.5px solid #bbdefb;padding:10px 14px;font-size:13px;font-family:'Inter',sans-serif;outline:none;border-radius:25px;color:#263238}
-  .input-area input:focus{border-color:#1565c0}
-  .send-btn{background:#1565c0;color:#fff;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:16px;transition:all .2s}
-  .send-btn:hover{background:#1e88e5}
-  .typing{display:flex;gap:5px;padding:6px 0}
-  .typing span{width:7px;height:7px;background:#1565c0;border-radius:50%;animation:b 1.2s infinite}
-  .typing span:nth-child(2){animation-delay:.2s}
-  .typing span:nth-child(3){animation-delay:.4s}
-  @keyframes b{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
+  .msg.bot{background:var(--bubble);color:var(--text);border-radius:0 12px 12px 12px;box-shadow:0 2px 8px rgba(21,101,192,.07);border:1px solid #e3eef9}
+  .msg.user{background:var(--accent);color:#fff;border-radius:12px 12px 0 12px;margin-left:auto}
+  .sender{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;color:var(--accent)}
+  .msg.user .sender{color:rgba(255,255,255,.7)}
+  .typing-indicator{display:flex;gap:5px;padding:10px 14px;background:var(--bubble);border-radius:0 12px 12px 12px;width:fit-content;box-shadow:0 2px 8px rgba(21,101,192,.07);border:1px solid #e3eef9}
+  .typing-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:typingDot 1.2s ease-in-out infinite}
+  .typing-dot:nth-child(2){animation-delay:.2s}
+  .typing-dot:nth-child(3){animation-delay:.4s}
+  .suggestions{display:flex;flex-wrap:wrap;gap:7px;padding:0 14px 10px}
+  .sug{background:var(--bubble);border:1.5px solid #bbdefb;color:var(--accent);padding:7px 12px;border-radius:20px;font-size:11.5px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500}
+  .sug:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .input-area{padding:12px 14px;background:var(--bubble);display:flex;gap:10px;border-top:1px solid #e3eef9}
+  .input-area input{flex:1;border:1.5px solid #bbdefb;padding:10px 14px;font-size:13px;font-family:'Inter',sans-serif;outline:none;border-radius:25px;color:var(--text);transition:border-color .2s}
+  .input-area input:focus{border-color:var(--accent)}
+  .send-btn{background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:16px;animation:glowPulse 2s ease-in-out infinite;transition:background .2s}
+  .send-btn:hover{background:var(--accent2)}
+  .stats-bar{display:flex;justify-content:space-around;background:var(--accent);padding:10px 20px;width:400px;border-radius:0 0 12px 12px}
+  .stat{text-align:center}
+  .stat-value{font-size:20px;font-weight:700;color:#fff}
+  .stat-label{font-size:9px;color:rgba(255,255,255,.6);letter-spacing:1px;text-transform:uppercase;margin-top:1px}
+  #welcome-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;animation:fadeIn .4s ease}
+  #welcome-card{background:#0a1929;border:1px solid var(--accent2);border-radius:20px;padding:34px 30px;max-width:320px;width:90%;text-align:center;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 60px rgba(21,101,192,.3)}
+  #welcome-card h2{color:#fff;font-size:20px;font-weight:600;margin-bottom:6px}
+  #welcome-card p{color:#888;font-size:13px;margin-bottom:8px;line-height:1.6}
+  #welcome-card h3{font-size:19px;font-weight:700;background:linear-gradient(90deg,var(--accent2),#64b5f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:18px}
+  .welcome-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:14px 28px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;width:100%;font-family:'Inter',sans-serif;transition:transform .2s}
+  .welcome-btn:hover{transform:scale(1.03)}
+  .welcome-note{color:#555;font-size:11px;margin-top:12px}
 </style>
 </head>
 <body>
-<div class="demo-banner">🦷 Démo interactive — Assistant IA Clinique Dentaire Lemonnier</div>
+<div id="welcome-overlay">
+  <div id="welcome-card">
+    <div style="font-size:44px;margin-bottom:14px;animation:float 3s ease-in-out infinite">🦷</div>
+    <h2>Démo exclusive</h2>
+    <p>Créée spécialement pour</p>
+    <h3>Clinique Dentaire Lemonnier</h3>
+    <p>Voici à quoi ressemblerait votre assistant IA 24h/24.<br><strong style="color:#fff">Testez-le — il répond vraiment.</strong></p>
+    <button class="welcome-btn" onclick="closeWelcome()">✨ Découvrir ma démo</button>
+    <p class="welcome-note">Sans engagement · Installation en 48h</p>
+  </div>
+</div>
 <div class="widget">
   <div class="header">
     <div class="h-icon">🦷</div>
@@ -48,20 +82,19 @@
       <span class="h-name">Clinique Dentaire Lemonnier</span>
       <span class="h-sub">Bd Maurice Lemonnier 217 · Bruxelles</span>
     </div>
-    <div class="h-status"><span class="h-dot"></span> Disponible</div>
+    <div class="h-status"><span class="h-dot"></span> En ligne</div>
   </div>
-  <div class="urgent">⚠️ <strong>Urgence dentaire ?</strong> Appelez le +32 2 268 51 45</div>
+  <div class="urgent">⚠️ <strong>Urgence ?</strong> Appelez le +32 2 268 51 45</div>
   <div class="messages" id="msgs">
     <div class="msg bot">
       <div class="sender">Clinique Lemonnier</div>
-      Bonjour ! Je suis l'assistant de la Clinique Dentaire Lemonnier. 🦷<br><br>Je peux vous aider à prendre rendez-vous, vous informer sur nos soins ou répondre à vos questions.
+      Bonjour ! 🦷 Je suis l'assistant de la Clinique Dentaire Lemonnier.<br>RDV, soins, urgences, mutuelles… Comment puis-je vous aider ?
     </div>
   </div>
   <div class="suggestions" id="sugs">
     <button class="sug" onclick="ask(this)">Prendre RDV</button>
     <button class="sug" onclick="ask(this)">Urgence dentaire</button>
     <button class="sug" onclick="ask(this)">Implants</button>
-    <button class="sug" onclick="ask(this)">Blanchiment</button>
     <button class="sug" onclick="ask(this)">Mutuelle</button>
   </div>
   <div class="input-area">
@@ -69,24 +102,32 @@
     <button class="send-btn" onclick="send()">→</button>
   </div>
 </div>
+<div class="stats-bar">
+  <div class="stat"><div class="stat-value" data-target="24">0</div><div class="stat-label">h/24 disponible</div></div>
+  <div class="stat"><div class="stat-value" data-target="2" data-suffix="s">0s</div><div class="stat-label">temps de réponse</div></div>
+  <div class="stat"><div class="stat-value" data-target="70" data-suffix="%">0%</div><div class="stat-label">no-shows évités</div></div>
+</div>
 <script>
-const R={
-  "rdv":["Pour prendre rendez-vous, utilisez notre système en ligne sur <strong>rendez-vous.clinique-dentaire-bruxelles.be</strong> ou appelez le <strong>+32 2 268 51 45</strong>. Nous répondons aussi au GSM : +32 498 111 828.","Réservez en ligne 24h/24 via notre agenda en ligne, ou appelez-nous directement. Quel soin souhaitez-vous ?"],
-  "urgence":["🚨 En cas d'urgence, appelez immédiatement le <strong>+32 2 268 51 45</strong> ou le <strong>+32 498 111 828</strong>. Nos dentistes d'urgence réduisent la douleur le plus rapidement possible.","Pour toute urgence dentaire (douleur aiguë, dent cassée, abcès), contactez-nous au <strong>+32 2 268 51 45</strong> — même en dehors des heures habituelles si vous êtes patient chez nous."],
-  "implant":["Les implants dentaires remplacent les dents manquantes de façon durable et naturelle. Consultation gratuite avec nos spécialistes. Appelez le <strong>+32 2 268 51 45</strong> pour en savoir plus.","Nos implants dentaires : une solution permanente, esthétique et fonctionnelle. Résultats visibles dès la pose de la couronne. Souhaitez-vous prendre un premier RDV de diagnostic ?"],
-  "blanchiment":["Nous proposons des soins de blanchiment dentaire professionnels, bien plus efficaces que les kits en pharmacie. Résultat visible dès la première séance. RDV au <strong>+32 2 268 51 45</strong>.","Blanchiment en cabinet : safe, rapide et durable. Consultez-nous pour connaître les options adaptées à la sensibilité de vos dents."],
-  "mutuelle":["Nous sommes <strong>conventionnés par toutes les mutuelles belges</strong>. Aucun supplément sur nos consultations de base. Votre remboursement s'applique normalement.","Bonne nouvelle : aucun supplément sur nos soins conventionnés. Votre mutuelle couvre les consultations selon les barèmes INAMI habituels."],
-  "invisalign":["Invisalign permet de redresser les dents sans appareil métallique — discret, confortable, efficace. Consultation de diagnostic gratuite. Appelez le <strong>+32 2 268 51 45</strong>.","L'Invisalign est notre spécialité orthodontique. Gouttières transparentes, résultats progressifs. Idéal pour adultes et adolescents."],
-  "horaire":["Contactez-nous au <strong>+32 2 268 51 45</strong> pour connaître nos créneaux disponibles. Notre système de RDV en ligne indique les disponibilités en temps réel.","Disponibilités en ligne sur <strong>rendez-vous.clinique-dentaire-bruxelles.be</strong>. Ou appelez le +32 2 268 51 45."],
-  "default":["La Clinique Dentaire Lemonnier propose : soins complets, implants, blanchiment, orthodontie, Invisalign, pédodontie. Conventionnés toutes mutuelles. Appelez le <strong>+32 2 268 51 45</strong> ou réservez en ligne.","Pour toute question, notre équipe est joignable au <strong>+32 2 268 51 45</strong> ou par email : contact@cliniquedentairelemonnier.be 🦷"]
-};
+let audioCtx;
+function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
+function playReceiveSound(){try{initAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(880,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(1100,audioCtx.currentTime+.1);g.gain.setValueAtTime(.07,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.3);o.start();o.stop(audioCtx.currentTime+.3);}catch(e){}}
+function playSendSound(){try{initAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(600,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(800,audioCtx.currentTime+.08);g.gain.setValueAtTime(.05,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.2);o.start();o.stop(audioCtx.currentTime+.2);}catch(e){}}
+setTimeout(()=>{document.getElementById('welcome-overlay').style.display='flex';},1500);
+function closeWelcome(){const o=document.getElementById('welcome-overlay');o.style.animation='fadeOut .3s ease forwards';setTimeout(()=>o.style.display='none',300);}
+function animateCounters(){document.querySelectorAll('.stat-value[data-target]').forEach(el=>{const target=parseInt(el.dataset.target),suffix=el.dataset.suffix||'';let cur=0;const inc=target/40;const t=setInterval(()=>{cur+=inc;if(cur>=target){cur=target;clearInterval(t);}el.textContent=Math.floor(cur)+suffix;},40);});}
+window.addEventListener('load',()=>setTimeout(animateCounters,2500));
+const BUSINESS_CONTEXT=`Tu es l'assistant de la Clinique Dentaire Lemonnier, Bd Maurice Lemonnier 217, Bruxelles. Réponds en français de manière professionnelle, rassurante et bienveillante. Pour les urgences : orienter vers le +32 2 268 51 45. Tu aides pour RDV, soins disponibles, mutuelles, urgences. Maximum 2 phrases avec un emoji médical subtil.`;
+async function getAIResponse(msg){
+  try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':'VOTRE_CLE_API','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:120,system:BUSINESS_CONTEXT,messages:[{role:'user',content:msg}]})});const d=await r.json();if(d.content&&d.content[0])return d.content[0].text;}catch(e){}return getFallback(msg);
+}
+const R={"rdv":["Réservez via <strong>rendez-vous.clinique-dentaire-bruxelles.be</strong> ou appelez le <strong>+32 2 268 51 45</strong> 📅","Créneaux disponibles en ligne 24h/24 ou au <strong>+32 2 268 51 45</strong> — quel soin souhaitez-vous ?"],"urgence":["🚨 Appelez immédiatement le <strong>+32 2 268 51 45</strong> ou <strong>+32 498 111 828</strong> — nos dentistes d'urgence interviennent rapidement","En dehors des heures habituelles, nos patients peuvent nous contacter directement au <strong>+32 498 111 828</strong> 🦷"],"implant":["Consultation implant gratuite — appelez le <strong>+32 2 268 51 45</strong>. Solution permanente et esthétique 🦷","Nos implants remplacent les dents manquantes de façon naturelle et durable. Souhaitez-vous un RDV diagnostic ?"],"mutuelle":["Nous sommes <strong>conventionnés par toutes les mutuelles belges</strong> — aucun supplément sur nos consultations de base ✅","Remboursement INAMI standard, zéro supplément. Votre mutuelle couvre normalement 🦷"],"default":["Clinique Lemonnier : soins complets, implants, blanchiment, Invisalign, pédodontie. Tel: <strong>+32 2 268 51 45</strong> 🦷","Pour toute question : <strong>+32 2 268 51 45</strong> ou contact@cliniquedentairelemonnier.be ✅"]};
 let ri={};
-function getR(k){ri[k]=(ri[k]||0);let r=R[k][ri[k]%R[k].length];ri[k]++;return r;}
-function detect(t){t=t.toLowerCase();if(t.match(/rdv|rendez|réserv|appointment/))return"rdv";if(t.match(/urgence|urgent|douleur|cassé|abcès|saigne/))return"urgence";if(t.match(/implant/))return"implant";if(t.match(/blanchi|whitening|blanc/))return"blanchiment";if(t.match(/mutuelle|remboursement|sécu|inami/))return"mutuelle";if(t.match(/invisalign|gouttière|bague|orthodont/))return"invisalign";if(t.match(/horaire|heure|ouvert|fermé/))return"horaire";return"default";}
+function getFallback(t){t=t.toLowerCase();let k='default';if(t.match(/rdv|rendez|réserv/))k='rdv';else if(t.match(/urgence|douleur|cassé|abcès/))k='urgence';else if(t.match(/implant/))k='implant';else if(t.match(/mutuelle|remboursement/))k='mutuelle';ri[k]=(ri[k]||0);const r=R[k][ri[k]%R[k].length];ri[k]++;return r;}
 function addMsg(t,s,html=false){const m=document.createElement('div');m.className='msg '+s;const sn=document.createElement('div');sn.className='sender';sn.textContent=s==='bot'?'Clinique Lemonnier':'Vous';m.appendChild(sn);const txt=document.createElement('span');if(html)txt.innerHTML=t;else txt.textContent=t;m.appendChild(txt);document.getElementById('msgs').appendChild(m);m.scrollIntoView({behavior:'smooth'});}
-function showTyping(){const t=document.createElement('div');t.className='msg bot';t.id='typing';t.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';document.getElementById('msgs').appendChild(t);t.scrollIntoView({behavior:'smooth'});}
-function ask(el){const q=el.textContent;document.getElementById('sugs').style.display='none';addMsg(q,'user');showTyping();setTimeout(()=>{document.getElementById('typing')?.remove();addMsg(getR(detect(q)),'bot',true);},900);}
-function send(){const v=document.getElementById('inp').value.trim();if(!v)return;document.getElementById('sugs').style.display='none';document.getElementById('inp').value='';addMsg(v,'user');showTyping();setTimeout(()=>{document.getElementById('typing')?.remove();addMsg(getR(detect(v)),'bot',true);},900);}
+function showTyping(){const el=document.createElement('div');el.className='msg bot';el.id='typing-el';el.innerHTML='<div class="sender">Clinique Lemonnier</div><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';document.getElementById('msgs').appendChild(el);el.scrollIntoView({behavior:'smooth'});return el;}
+async function sendMsg(v){document.getElementById('sugs').style.display='none';addMsg(v,'user');playSendSound();const typing=showTyping();const[resp]=await Promise.all([getAIResponse(v),new Promise(r=>setTimeout(r,800))]);typing.remove();addMsg(resp,'bot',true);playReceiveSound();}
+function ask(el){sendMsg(el.textContent);}
+function send(){const v=document.getElementById('inp').value.trim();if(!v)return;document.getElementById('inp').value='';sendMsg(v);}
 </script>
 </body>
 </html>
